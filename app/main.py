@@ -1,10 +1,22 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import sys
+import os
 
-from . import models
-from .database import engine
-from .routers import users, blood_pressure
+# Add the parent directory to the path to allow imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    # Try relative imports first (when run as module)
+    from . import models
+    from .database import engine
+    from .routers import users, blood_pressure, health_advisor
+except ImportError:
+    # Fall back to absolute imports (when run directly)
+    from app import models
+    from app.database import engine
+    from app.routers import users, blood_pressure, health_advisor
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -27,6 +39,7 @@ app.add_middleware(
 # Include routers
 app.include_router(users.router)
 app.include_router(blood_pressure.router)
+app.include_router(health_advisor.router)
 
 @app.get("/")
 def read_root():
@@ -35,7 +48,9 @@ def read_root():
         "endpoints": {
             "users": "/users/",
             "blood_pressure_readings": "/bp/readings/",
-            "upload_bp_image": "/bp/upload/"
+            "upload_bp_image": "/bp/upload/",
+            "health_advisor": "/health-advisor/advice",
+            "health_advisor_status": "/health-advisor/status"
         }
     }
 

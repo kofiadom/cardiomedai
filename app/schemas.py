@@ -46,3 +46,16 @@ class BloodPressure(BloodPressureBase):
 # Device Upload schema for future OCR implementation
 class DeviceImageUpload(BaseModel):
     image_data: str  # Base64 encoded image
+
+# Health Advisor schemas
+class HealthAdvisorRequest(BaseModel):
+    user_id: int
+    message: str = "Good morning! Can you check my blood pressure readings from the past week and give me some advice?"
+
+class HealthAdvisorResponse(BaseModel):
+    user_id: int
+    request_message: str
+    advisor_response: str
+    agent_id: Optional[str] = None
+    thread_id: Optional[str] = None
+    status: str = "completed"
