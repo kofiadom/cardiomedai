@@ -1,0 +1,217 @@
+/* History Page Specific Styles */
+
+.history-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    color: #2c3e50;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: #e9ecef;
+    transform: translateX(-5px);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.history-filters {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.search-box {
+    position: relative;
+    width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 35px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+/* Graph Card Styles */
+.graph-card {
+    margin-bottom: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.graph-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.graph-controls select {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    cursor: pointer;
+}
+
+.graph-container {
+    padding: 20px;
+    height: 300px;
+}
+
+/* Statistics Summary */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-card h4 {
+    color: #666;
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Table Styles */
+.table-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.readings-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+.readings-table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    cursor: pointer;
+    user-select: none;
+}
+
+.readings-table th i {
+    margin-left: 5px;
+    font-size: 0.8rem;
+}
+
+.readings-table td {
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.readings-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Status Colors */
+.status-normal {
+    color: #27ae60;
+}
+
+.status-elevated {
+    color: #f39c12;
+}
+
+.status-high {
+    color: #e74c3c;
+}
+
+/* Notes Column */
+.notes-cell {
+    max-width: 300px;
+    white-space: normal;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.device-cell {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .history-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .history-filters {
+        width: 100%;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .stats-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .readings-table th, 
+    .readings-table td {
+        padding: 10px;
+    }
+
+    .notes-cell {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-summary {
+        grid-template-columns: 1fr;
+    }
+}

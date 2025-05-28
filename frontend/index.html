@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioMed AI - Your Personal Hypertension Management Companion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>CardioMed AI</h1>
+            </div>
+            <div class="user-info">
+                <span id="user-name">Welcome, Kofi</span>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            <!-- Latest BP Reading Card -->
+            <div class="card bp-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Latest Blood Pressure</h2>
+                    <span class="timestamp" id="last-reading-time">Today, 8:30 AM</span>
+                </div>
+                <div class="bp-reading">
+                    <div class="bp-numbers">
+                        <span class="systolic" id="systolic">123</span>
+                        <span class="separator">/</span>
+                        <span class="diastolic" id="diastolic">80</span>
+                        <span class="unit">mmHg</span>
+                    </div>
+                    <div class="bp-status normal" id="bp-status">Normal</div>
+                    <div class="pulse">
+                        <i class="fas fa-heart"></i>
+                        <span id="pulse">72 BPM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Health Insight -->
+            <div class="card insight-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-md"></i> Daily Health Insight</h2>
+                    <button class="refresh-btn" onclick="getDailyInsight()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-message" id="daily-insight">
+                        <i class="fas fa-spinner fa-spin"></i> Getting your daily insight...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="addReading()">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Add Reading</h3>
+                    <p>Log new BP measurement</p>
+                </div>
+
+                <div class="action-card" onclick="scanDevice()">
+                    <i class="fas fa-camera"></i>
+                    <h3>Scan Device</h3>
+                    <p>Photo capture with OCR</p>
+                </div>
+
+                <div class="action-card" onclick="uploadBPImage()">
+                    <i class="fas fa-upload"></i>
+                    <h3>Upload Image</h3>
+                    <p>Upload BP monitor photo</p>
+                </div>
+
+                <div class="action-card" onclick="viewHistory()">
+                    <i class="fas fa-history"></i>
+                    <h3>History</h3>
+                    <p>View past readings</p>
+                </div>
+
+                <div class="action-card" onclick="askAI()">
+                    <i class="fas fa-robot"></i>
+                    <h3>Ask AI</h3>
+                    <p>Get health education</p>
+                </div>
+            </div>
+
+            <!-- Health Reminders -->
+            <div class="card reminders-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bell"></i> Health Reminders</h2>
+                </div>
+                <div class="reminders-list">
+                    <div class="reminder-item">
+                        <i class="fas fa-pills"></i>
+                        <div class="reminder-content">
+                            <span class="reminder-title">Morning Medication</span>
+                            <span class="reminder-time">8:00 AM</span>
+                        </div>
+                        <div class="reminder-status pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+
+                    <div class="reminder-item">
+                        <i class="fas fa-walking"></i>
+                        <div class="reminder-content">
+                            <span class="reminder-title">Daily Walk</span>
+                            <span class="reminder-time">6:00 PM</span>
+                        </div>
+                        <div class="reminder-status pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+
+                    <div class="reminder-item">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="reminder-content">
+                            <span class="reminder-title">Evening BP Check</span>
+                            <span class="reminder-time">9:00 PM</span>
+                        </div>
+                        <div class="reminder-status pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Summary -->
+            <div class="card summary-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-bar"></i> This Week</h2>
+                </div>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="readings-count">16</div>
+                        <div class="stat-label">Readings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="avg-systolic">125</div>
+                        <div class="stat-label">Avg Systolic</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="avg-diastolic">82</div>
+                        <div class="stat-label">Avg Diastolic</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number good" id="trend">↓</div>
+                        <div class="stat-label">Trend</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 CardioMed AI - Your Personal Hypertension Management Companion</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

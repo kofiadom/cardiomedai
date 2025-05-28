@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Add the parent directory to the path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

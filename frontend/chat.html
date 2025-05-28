@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioMed AI - Health Education Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chat.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>CardioMed AI</h1>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" onclick="goHome()">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <div class="user-info">
+                    <span id="user-name">Kofi</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Interface -->
+        <main class="chat-main">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="agent-info">
+                        <div class="agent-avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="agent-details">
+                            <h2>Knowledge Agent</h2>
+                            <p>Your personal hypertension educator</p>
+                            <div class="agent-status online">
+                                <i class="fas fa-circle"></i>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="action-btn" onclick="clearChat()" title="Clear Chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="action-btn" onclick="toggleUserContext()" title="Include My Data" id="context-btn">
+                            <i class="fas fa-user-chart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message agent-message welcome-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                <p>👋 Hello! I'm your CardioMed AI Knowledge Agent, your personal hypertension educator.</p>
+                                <p>I can help you understand:</p>
+                                <ul>
+                                    <li>Blood pressure categories and what they mean</li>
+                                    <li>Lifestyle changes for better heart health</li>
+                                    <li>Medications and their effects</li>
+                                    <li>Diet and exercise recommendations</li>
+                                    <li>When to seek medical attention</li>
+                                </ul>
+                                <p>Feel free to ask me anything about hypertension management! 🩺</p>
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Questions -->
+                <div class="quick-questions" id="quick-questions">
+                    <div class="quick-questions-header">
+                        <h3>Quick Questions</h3>
+                        <button onclick="toggleQuickQuestions()" id="toggle-questions">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="questions-grid">
+                        <button class="question-btn" onclick="askQuickQuestion('What are normal blood pressure ranges?')">
+                            📊 Normal BP Ranges
+                        </button>
+                        <button class="question-btn" onclick="askQuickQuestion('What foods should I avoid with high blood pressure?')">
+                            🥗 Foods to Avoid
+                        </button>
+                        <button class="question-btn" onclick="askQuickQuestion('How does exercise affect blood pressure?')">
+                            🏃‍♂️ Exercise & BP
+                        </button>
+                        <button class="question-btn" onclick="askQuickQuestion('What are the side effects of ACE inhibitors?')">
+                            💊 Medication Effects
+                        </button>
+                        <button class="question-btn" onclick="askQuickQuestion('How often should I monitor my blood pressure?')">
+                            ⏰ Monitoring Frequency
+                        </button>
+                        <button class="question-btn" onclick="askQuickQuestion('What lifestyle changes can lower blood pressure?')">
+                            🌱 Lifestyle Changes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="input-options">
+                        <div class="context-toggle">
+                            <input type="checkbox" id="include-context" />
+                            <label for="include-context">
+                                <i class="fas fa-user-chart"></i>
+                                Include my BP data for personalized advice
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <div class="input-wrapper">
+                            <textarea
+                                id="message-input"
+                                placeholder="Ask about blood pressure, medications, lifestyle, or any health questions..."
+                                rows="1"
+                            ></textarea>
+                            <button class="send-btn" onclick="sendMessage()" id="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-footer">
+                            <div class="typing-indicator" id="typing-indicator">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Knowledge Agent is typing...</span>
+                                <div class="typing-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="input-hint">
+                                Press Enter to send, Shift+Enter for new line
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Define API constants for chat page
+        const API_BASE_URL = 'http://localhost:8000';
+        const USER_ID = 1;
+    </script>
+    <script src="chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioMed AI - Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+        .error {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        .success {
+            border-left-color: #27ae60;
+            background: #f0f9f4;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 CardioMed AI Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h2>1. Basic Connectivity Test</h2>
+        <p>Test if the CardioMed AI server is running and accessible.</p>
+        <button onclick="testServerConnection()">Test Server Connection</button>
+        <div id="server-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>2. Knowledge Agent API Test</h2>
+        <p>Test the Knowledge Agent endpoint directly.</p>
+        <button onclick="testKnowledgeAgent()">Test Knowledge Agent</button>
+        <div id="knowledge-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>3. Health Advisor API Test</h2>
+        <p>Test the Health Advisor endpoint.</p>
+        <button onclick="testHealthAdvisor()">Test Health Advisor</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>4. Chat Interface Test</h2>
+        <p>Test the chat interface functionality without API calls.</p>
+        <button onclick="testChatInterface()">Test Chat Interface</button>
+        <button onclick="openChatPage()">Open Chat Page</button>
+        <div id="chat-result"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>5. Browser Console</h2>
+        <p>Open your browser's Developer Tools (F12) and check the Console tab for any error messages.</p>
+        <button onclick="logDebugInfo()">Log Debug Info to Console</button>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+
+        function showResult(elementId, message, isError = false, isSuccess = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${isError ? 'error' : isSuccess ? 'success' : ''}">${message}</div>`;
+        }
+
+        async function testServerConnection() {
+            const resultId = 'server-result';
+            showResult(resultId, '🔄 Testing server connection...');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(resultId, `✅ Server is running!<br><pre>${JSON.stringify(data, null, 2)}</pre>`, false, true);
+                } else {
+                    showResult(resultId, `❌ Server responded with error: ${response.status}`, true);
+                }
+            } catch (error) {
+                showResult(resultId, `❌ Cannot connect to server: ${error.message}<br><br>Make sure:<br>1. CardioMed AI server is running (uv run -m app.main)<br>2. Server is accessible at ${API_BASE_URL}`, true);
+            }
+        }
+
+        async function testKnowledgeAgent() {
+            const resultId = 'knowledge-result';
+            showResult(resultId, '🔄 Testing Knowledge Agent...');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/knowledge-agent/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: 1,
+                        question: "What are normal blood pressure ranges?",
+                        include_user_context: false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.answer) {
+                    showResult(resultId, `✅ Knowledge Agent is working!<br><br><strong>Question:</strong> What are normal blood pressure ranges?<br><br><strong>Answer:</strong> ${data.answer.substring(0, 200)}...`, false, true);
+                } else {
+                    showResult(resultId, `❌ Knowledge Agent error:<br><pre>${JSON.stringify(data, null, 2)}</pre>`, true);
+                }
+            } catch (error) {
+                showResult(resultId, `❌ Knowledge Agent test failed: ${error.message}`, true);
+            }
+        }
+
+        async function testHealthAdvisor() {
+            const resultId = 'health-result';
+            showResult(resultId, '🔄 Testing Health Advisor...');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/health-advisor/advice/1`);
+                const data = await response.json();
+                
+                if (response.ok && data.advisor_response) {
+                    showResult(resultId, `✅ Health Advisor is working!<br><br><strong>Response:</strong> ${data.advisor_response}`, false, true);
+                } else {
+                    showResult(resultId, `❌ Health Advisor error:<br><pre>${JSON.stringify(data, null, 2)}</pre>`, true);
+                }
+            } catch (error) {
+                showResult(resultId, `❌ Health Advisor test failed: ${error.message}`, true);
+            }
+        }
+
+        function testChatInterface() {
+            const resultId = 'chat-result';
+            showResult(resultId, '🔄 Testing chat interface...', false, false);
+            
+            // Test if we can access the chat page elements
+            try {
+                // This will test if the chat page can be loaded
+                const testWindow = window.open('chat.html', '_blank', 'width=400,height=300');
+                
+                setTimeout(() => {
+                    if (testWindow) {
+                        testWindow.close();
+                        showResult(resultId, '✅ Chat page can be opened. Check browser console for any JavaScript errors.', false, true);
+                    } else {
+                        showResult(resultId, '❌ Could not open chat page. Check if chat.html exists.', true);
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                showResult(resultId, `❌ Chat interface test failed: ${error.message}`, true);
+            }
+        }
+
+        function openChatPage() {
+            window.open('chat.html', '_blank');
+        }
+
+        function logDebugInfo() {
+            console.log('=== CardioMed AI Debug Info ===');
+            console.log('API Base URL:', API_BASE_URL);
+            console.log('Current URL:', window.location.href);
+            console.log('User Agent:', navigator.userAgent);
+            console.log('Local Storage:', localStorage);
+            console.log('Session Storage:', sessionStorage);
+            
+            // Test if fetch is available
+            console.log('Fetch available:', typeof fetch !== 'undefined');
+            
+            // Test CORS
+            console.log('Testing CORS...');
+            fetch(`${API_BASE_URL}/`)
+                .then(response => {
+                    console.log('CORS test - Response status:', response.status);
+                    console.log('CORS test - Response headers:', response.headers);
+                })
+                .catch(error => {
+                    console.error('CORS test failed:', error);
+                });
+            
+            alert('Debug info logged to console. Open Developer Tools (F12) to view.');
+        }
+
+        // Auto-run server connection test when page loads
+        window.addEventListener('load', () => {
+            setTimeout(testServerConnection, 1000);
+        });
+    </script>
+</body>
+</html>

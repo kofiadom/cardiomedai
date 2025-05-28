@@ -14,12 +14,13 @@ class HealthAdvisorService:
     """
 
     def __init__(self, project_endpoint: str = None, toolbox_url: str = "http://127.0.0.1:5000"):
-        self.project_endpoint = project_endpoint or "https://azure-ai-agent-test-resource.services.ai.azure.com/api/projects/azure-ai-agent-test"
+        self.project_endpoint = project_endpoint or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
         self.toolbox_url = toolbox_url
         self.project_client = None
         self.toolbox_client = None
         self.tool_definitions = []
         self.tool_map = {}
+        self.agent_id = None  # Store the agent ID
 
         # Ensure we're using the correct database path
         self._ensure_database_path()
@@ -62,7 +63,7 @@ class HealthAdvisorService:
             print(f"⚠️ Could not update YAML database path: {e}")
 
     async def initialize(self):
-        """Initialize the Azure AI client and load MCP tools."""
+        """Initialize the Azure AI client, load MCP tools, and create/get agent."""
         # Create an AIProjectClient instance
         self.project_client = AIProjectClient(
             endpoint=self.project_endpoint,
@@ -72,6 +73,17 @@ class HealthAdvisorService:
         # Get tools from MCP server and convert to Azure AI format
         self.toolbox_client = ToolboxClient(self.toolbox_url)
         mcp_tools = await self.toolbox_client.load_toolset("my_toolset")
+
+        # Try to get existing agent or create new one
+        try:
+            self.agent_id = os.getenv("HEALTH_ADVISOR_AGENT_ID")
+            agent = self.project_client.agents.get_agent(self.agent_id)
+            print(f"✅ Successfully connected to existing agent: {self.agent_id}")
+        except Exception as e:
+            print(f"Creating new agent as existing agent not found: {e}")
+            agent = await self.create_agent()
+            self.agent_id = agent.id
+            print(f"✅ Created new agent: {self.agent_id}")
 
         # Convert MCP tools to Azure AI format
         self.tool_definitions = []
@@ -146,8 +158,11 @@ class HealthAdvisorService:
             Dict containing the response and metadata
         """
         try:
-            # Create an agent
-            agent_id = await self.create_agent()
+            # Use existing agent
+            if not self.agent_id:
+                print("⚠️ No agent ID found, creating new agent")
+                agent = await self.create_agent()
+                self.agent_id = agent.id
 
             # Create a thread for communication
             thread = self.project_client.agents.threads.create()
@@ -162,7 +177,7 @@ class HealthAdvisorService:
             # Create a run for the agent to process the message
             run = self.project_client.agents.runs.create(
                 thread_id=thread.id,
-                agent_id=agent_id
+                agent_id=self.agent_id
             )
 
             # Poll the run status until it is completed or requires action
@@ -205,7 +220,7 @@ class HealthAdvisorService:
                 return {
                     "status": "completed",
                     "response": assistant_response or "No response generated",
-                    "agent_id": agent_id,
+                    "agent_id": self.agent_id,
                     "thread_id": thread.id
                 }
             else:
@@ -213,7 +228,7 @@ class HealthAdvisorService:
                     "status": "failed",
                     "response": f"Agent run failed with status: {run.status}",
                     "error": getattr(run, 'last_error', None),
-                    "agent_id": agent_id,
+                    "agent_id": self.agent_id,
                     "thread_id": thread.id
                 }
 
