@@ -47,10 +47,10 @@ class BloodPressure(BloodPressureBase):
 class DeviceImageUpload(BaseModel):
     image_data: str  # Base64 encoded image
 
-# Health Advisor schemas
+# Health Advisor schemas (Community Health Worker)
 class HealthAdvisorRequest(BaseModel):
     user_id: int
-    message: str = "Good morning! Can you check my blood pressure readings from the past week and give me some advice?"
+    message: str = "Good morning! How am I doing with my blood pressure this week?"
 
 class HealthAdvisorResponse(BaseModel):
     user_id: int
@@ -58,4 +58,20 @@ class HealthAdvisorResponse(BaseModel):
     advisor_response: str
     agent_id: Optional[str] = None
     thread_id: Optional[str] = None
+    status: str = "completed"
+
+# Knowledge Agent schemas (RAG-based hypertension education)
+class KnowledgeAgentRequest(BaseModel):
+    user_id: Optional[int] = None  # Optional - can be used for personalization
+    question: str
+    include_user_context: bool = False  # Whether to include user's BP data for context
+
+class KnowledgeAgentResponse(BaseModel):
+    question: str
+    answer: str
+    sources: Optional[List[str]] = None  # File sources used for the answer
+    user_id: Optional[int] = None
+    agent_id: Optional[str] = None
+    thread_id: Optional[str] = None
+    vector_store_id: Optional[str] = None
     status: str = "completed"

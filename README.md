@@ -1,16 +1,41 @@
-# CardioMed AI
+# CardioMed AI - Your Personal Hypertension Management Companion
 
-CardioMed AI is a comprehensive blood pressure management system designed to help users track, analyze, and interpret their blood pressure readings. The application provides a RESTful API for managing blood pressure data, user profiles, and includes OCR functionality to extract readings from blood pressure monitor images.
+**CardioMed AI** is an intelligent blood pressure management system that makes monitoring and managing hypertension simple, personal, and engaging.
 
-![CardioMed AI Logo](https://via.placeholder.com/150x150.png?text=CardioMed+AI)
+## 🩺 **What CardioMed AI Does**
 
-## Features
+### **Smart Blood Pressure Logging**
+- **Scan & Log**: Simply take a photo of your BP monitor - CardioMed AI automatically reads and logs your readings
+- **Manual Entry**: Quick manual input option for any blood pressure device
+- **Automatic Tracking**: All readings are stored with timestamps and personal notes
 
-- **User Management**: Create and manage user profiles with medical information
-- **Blood Pressure Tracking**: Log and monitor blood pressure readings over time
-- **OCR Processing**: Extract blood pressure readings from images using AI
-- **Standardized Interpretation**: Automatic categorization of readings based on medical guidelines
-- **Statistical Analysis**: View trends and patterns in blood pressure data
+### **AI-Powered Health Support**
+CardioMed AI features two intelligent agents powered by Azure AI:
+
+#### **🏥 Health Advisor (Community Health Worker)**
+Your daily health companion that provides:
+- Short, encouraging daily check-ins
+- Personal feedback on your BP progress
+- Simple daily tips and reminders
+- Motivational support like a caring friend
+
+*"Good morning! Your 123/80 shows you're doing great! Take a short walk today. Keep it up! 💪"*
+
+#### **📚 Knowledge Agent (Health Educator)**
+Your personal hypertension expert that offers:
+- Evidence-based answers to your health questions
+- Detailed information about blood pressure management
+- Personalized education based on your readings
+- Comprehensive lifestyle and medication guidance
+
+### **Key Features**
+- ✅ **OCR Technology** - Instant BP reading capture from device photos
+- ✅ **Personal Health Profiles** - Track medications, conditions, and goals
+- ✅ **Real-time Analysis** - AI agents access your latest readings for personalized advice
+- ✅ **Friendly Interface** - Easy-to-use API with comprehensive documentation
+- ✅ **Data Security** - Secure storage of all health information
+
+**CardioMed AI transforms hypertension management from a clinical task into a supportive, intelligent health journey.**
 
 ## Getting Started
 

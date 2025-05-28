@@ -41,21 +41,25 @@ async def get_health_advice(
     db: Session = Depends(get_db)
 ):
     """
-    Get personalized health advice from the AI health advisor agent.
+    Get a friendly daily check-in from your community health worker.
 
-    The agent will:
-    1. Review the user's profile and medical information
-    2. Analyze their blood pressure history and trends
-    3. Provide personalized recommendations and lifestyle tips
-    4. Alert about readings outside target ranges
-    5. Consider notes about lifestyle factors
+    **What you'll get:**
+    - Short, encouraging message (3-4 sentences)
+    - Personal feedback on your recent BP progress
+    - One simple daily tip or reminder
+    - Motivational support like a caring friend
 
-    **Blood Pressure Categories:**
-    - Normal: <120/80
-    - Elevated: 120-129/<80
-    - Stage 1: 130-139/80-89
-    - Stage 2: ≥140/≥90
-    - Crisis: >180/>120 (immediate medical attention advised)
+    **Perfect for:**
+    - Daily morning check-ins
+    - Quick progress updates
+    - Motivation and encouragement
+    - Simple health reminders
+
+    **Example responses:**
+    - "Great job! Your BP dropped to 125/82 yesterday. Try a 10-minute walk after lunch today! 🚶‍♂️"
+    - "Your 118/75 reading this morning is excellent! Remember to drink 8 glasses of water today! 💧"
+
+    **Note:** For detailed medical information, use the Knowledge Agent instead.
     """
     # Verify the user exists
     user = db.query(models.User).filter(models.User.id == request.user_id).first()
@@ -92,20 +96,24 @@ async def get_health_advice(
 @router.get("/advice/{user_id}")
 async def get_quick_health_advice(
     user_id: int,
-    message: str = "Good morning! Can you check my blood pressure readings from the past week and give me some advice?",
+    message: str = "Good morning! How am I doing with my blood pressure this week?",
     db: Session = Depends(get_db)
 ):
     """
-    Quick endpoint to get health advice with a simple GET request.
+    Quick daily check-in with your community health worker.
 
     **Parameters:**
-    - user_id: The ID of the user requesting advice
-    - message: Optional custom message (defaults to morning health check)
+    - user_id: The ID of the user requesting check-in
+    - message: Optional custom message (defaults to morning check-in)
 
-    **Example usage:**
+    **Perfect for daily use:**
     ```
-    GET /health-advisor/advice/1?message=How are my blood pressure trends this month?
+    GET /health-advisor/advice/1
+    GET /health-advisor/advice/1?message=How did I do yesterday?
+    GET /health-advisor/advice/1?message=Any tips for today?
     ```
+
+    **Returns:** Short, encouraging message with personal feedback and daily tip.
     """
     # Create request object
     request = schemas.HealthAdvisorRequest(

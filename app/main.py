@@ -11,7 +11,7 @@ try:
     # Try relative imports first (when run as module)
     from . import models
     from .database import engine
-    from .routers import users, blood_pressure, health_advisor
+    from .routers import users, blood_pressure, health_advisor, knowledge_agent
 except ImportError:
     # Fall back to absolute imports (when run directly)
     from app import models
@@ -40,6 +40,7 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(blood_pressure.router)
 app.include_router(health_advisor.router)
+app.include_router(knowledge_agent.router)
 
 @app.get("/")
 def read_root():
@@ -50,7 +51,9 @@ def read_root():
             "blood_pressure_readings": "/bp/readings/",
             "upload_bp_image": "/bp/upload/",
             "health_advisor": "/health-advisor/advice",
-            "health_advisor_status": "/health-advisor/status"
+            "health_advisor_status": "/health-advisor/status",
+            "knowledge_agent": "/knowledge-agent/ask",
+            "knowledge_agent_status": "/knowledge-agent/status"
         }
     }
 
