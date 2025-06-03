@@ -18,7 +18,7 @@
                 <i class="fas fa-heartbeat"></i>
                 <h1>CardioMed AI</h1>
             </div>
-            <div class="user-info">
+            <div class="user-info" onclick="window.location.href='profile.html'" style="cursor: pointer;">
                 <span id="user-name">Welcome, Kofi</span>
                 <i class="fas fa-user-circle"></i>
             </div>
@@ -36,6 +36,12 @@
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" id="searchInput" placeholder="Search notes, device...">
+                    </div>
+                    <div class="export-controls">
+                        <button type="button" class="export-btn" onclick="exportData('csv')">
+                            <i class="fas fa-download"></i>
+                            <span>CSV</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -107,6 +113,6 @@
         </footer>
     </div>
 
-    <script src="history.js"></script>
+    <script src="history.js" type="text/javascript" defer></script>
 </body>
 </html>

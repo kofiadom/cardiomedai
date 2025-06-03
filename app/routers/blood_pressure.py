@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks, Response
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import base64
+import pandas as pd
+from io import BytesIO
 
 from .. import models, schemas
 from ..database import get_db
@@ -238,6 +240,51 @@ async def save_ocr_reading(
             status_code=500,
             detail=f"Error saving OCR reading: {str(e)}"
         )
+
+@router.get("/export/csv/{user_id}")
+async def export_csv(user_id: int, db: Session = Depends(get_db)):
+    """Export blood pressure readings as CSV."""
+    # Get user's readings
+    readings = db.query(models.BloodPressure).filter(
+        models.BloodPressure.user_id == user_id
+    ).order_by(models.BloodPressure.reading_time.desc()).all()
+
+    if not readings:
+        raise HTTPException(status_code=404, detail="No readings found")
+
+    # Convert to DataFrame
+    data = []
+    for reading in readings:
+        data.append({
+            'Date/Time': reading.reading_time,
+            'Systolic': reading.systolic,
+            'Diastolic': reading.diastolic,
+            'Pulse': reading.pulse,
+            'Status': reading.interpretation,
+            'Device': reading.device_id or 'Manual Entry',
+            'Notes': reading.notes or ''
+        })
+    
+    df = pd.DataFrame(data)
+    
+    # Create CSV in memory
+    output = BytesIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+    
+    # Return CSV file
+    content = output.getvalue()
+    headers = {
+        'Content-Disposition': f'attachment; filename=bp_history_{datetime.now().strftime("%Y%m%d")}.csv',
+        'Content-Type': 'text/csv',
+        'Access-Control-Expose-Headers': 'Content-Disposition'
+    }
+    return Response(
+        content=content,
+        media_type='text/csv',
+        headers=headers
+    )
+
 
 @router.get("/readings/stats/{user_id}")
 def get_reading_stats(user_id: int, db: Session = Depends(get_db)):

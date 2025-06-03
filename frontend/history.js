@@ -256,3 +256,56 @@ function getStatusClass(status) {
     if (status.includes('Hypertension') || status.includes('Crisis')) return 'status-high';
     return '';
 }
+
+// Export data function
+async function exportData() {
+    try {
+        // Show loading state
+        const btn = document.querySelector('.export-btn');
+        const originalContent = btn.innerHTML;
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Exporting...`;
+
+        // Make request
+        const response = await fetch(`${API_BASE_URL}/bp/export/csv/${USER_ID}`);
+        
+        if (!response.ok) {
+            throw new Error(`Export failed: ${response.status} ${response.statusText}`);
+        }
+
+        // Get file
+        const blob = await response.blob();
+        const filename = `bp_history_${new Date().toISOString().split('T')[0]}.csv`;
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        link.download = filename;
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        // Reset button state
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = originalContent;
+
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Error exporting data. Please try again.');
+        
+        // Reset button state
+        const btn = document.querySelector('.export-btn');
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = `<i class="fas fa-download"></i> <span>CSV</span>`;
+    }
+}

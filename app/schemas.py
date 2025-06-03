@@ -17,6 +17,15 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    medical_conditions: Optional[str] = None
+    medications: Optional[str] = None
+
 class User(UserBase):
     id: int
 
