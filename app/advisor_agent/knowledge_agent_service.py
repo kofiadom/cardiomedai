@@ -9,14 +9,10 @@ from toolbox_core import ToolboxClient
 
 
 class KnowledgeAgentService:
-    """
-    Service class for managing knowledge agent interactions with RAG capabilities.
-    Provides hypertension education through file search and optional database context.
-    """
-
-    def __init__(self, project_endpoint: str = None, toolbox_url: str = "http://127.0.0.1:5000"):
+    def __init__(self, project_endpoint: str = None, toolbox_url: str = None):
         self.project_endpoint = project_endpoint or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-        self.toolbox_url = toolbox_url
+        # Use environment variable or default to toolbox service name
+        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://172.19.0.2:5000")
         self.project_client = None
         self.toolbox_client = None
         self.vector_store_id = None

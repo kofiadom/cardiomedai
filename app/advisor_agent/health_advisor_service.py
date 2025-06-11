@@ -13,15 +13,16 @@ class HealthAdvisorService:
     Provides a reusable interface for creating agents and processing health advice requests.
     """
 
-    def __init__(self, project_endpoint: str = None, toolbox_url: str = "http://127.0.0.1:5000"):
+    def __init__(self, project_endpoint: str = None, toolbox_url: str = None):
         self.project_endpoint = project_endpoint or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-        self.toolbox_url = toolbox_url
+        # Use environment variable or default to toolbox service name
+        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://toolbox:5000")
         self.project_client = None
         self.toolbox_client = None
         self.tool_definitions = []
         self.tool_map = {}
         self.agent_id = None  # Store the agent ID
-
+    
         # Ensure we're using the correct database path
         self._ensure_database_path()
 
