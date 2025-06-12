@@ -7,6 +7,7 @@ services:
       - "5000:5000"
     volumes:
       - ./app/advisor_agent/tools.yaml:/tools.yaml
+      - ./hypertension.db:/app/hypertension.db  # ✅ Mount the real DB here
     command: /toolbox --tools-file /tools.yaml --address 0.0.0.0
 
 
