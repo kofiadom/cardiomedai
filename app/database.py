@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# SQLALCHEMY_DATABASE_URL = "sqlite:///./hypertension.db" #for local
-SQLALCHEMY_DATABASE_URL = "sqlite:////app/hypertension.db" #for docker
+SQLALCHEMY_DATABASE_URL = "sqlite:///./hypertension.db"
+
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
