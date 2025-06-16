@@ -10,5 +10,5 @@ def get_current_datetime():
     """
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-datetime_tool_def = FunctionTool(functions=get_current_datetime)
+datetime_tool_def = FunctionTool(functions={get_current_datetime})
 
