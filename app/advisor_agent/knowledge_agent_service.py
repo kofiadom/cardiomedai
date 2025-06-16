@@ -85,6 +85,7 @@ class KnowledgeAgentService:
             # Store MCP tools for later use
             self.db_tool_map = {tool._name: tool for tool in mcp_tools}
             print(f"✅ Initialized {len(self.db_tool_definitions)} database tools")
+            
 
         except Exception as e:
             print(f"⚠️ Could not initialize database tools: {e}")
@@ -280,7 +281,7 @@ class KnowledgeAgentService:
     2. SECOND: If relevant, use database tools to get user-specific data  
     3. THIRD: Combine both sources for a comprehensive, personalized answer
 
-    Always use file_search FIRST to search your knowledge base, then use database tools if needed for user context."""
+    Always use file_search FIRST to search your knowledge base, then use database tools if needed for user context. You also have to to get current date and time if needed"""
 
             # Add message to thread
             message = self.project_client.agents.messages.create(
@@ -305,9 +306,14 @@ class KnowledgeAgentService:
                     tool_outputs = [] 
                     for tool_call in tool_calls: 
                         # Get the actual MCP tool and call it 
-                        tool = self.db_tool_map[tool_call.function.name] 
-                        result = await tool() 
-                        tool_outputs.append({"tool_call_id": tool_call.id, "output": json.dumps(result)}) 
+                        tool = self.db_tool_map[tool_call.function.name]
+                        print(f"✅Calling tool: {tool_call.function.name}")
+                        result = await tool()  # MCP tools are async
+                        
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": json.dumps(result)
+                        })
                      
                     run = self.project_client.agents.runs.submit_tool_outputs( 
                         thread_id=thread.id, 

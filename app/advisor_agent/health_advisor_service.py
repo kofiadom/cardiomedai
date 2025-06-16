@@ -5,6 +5,8 @@ from typing import Optional, Dict, Any
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from toolbox_core import ToolboxClient
+from .datetime_tool import datetime_tool_def
+from .datetime_tool import get_current_datetime
 
 
 class HealthAdvisorService:
@@ -122,9 +124,19 @@ class HealthAdvisorService:
                 }
             }
             self.tool_definitions.append(tool_def)
+            
+        # Add datetime tool
+        self.tool_definitions.append(datetime_tool_def.definitions)
+        
+        print(f"✅ Total tools for agent: {len(self.tool_definitions)}")
+        for tool in self.tool_definitions:
+            print(f"   - {tool}")
 
         # Store MCP tools for later use
         self.tool_map = {tool._name: tool for tool in mcp_tools}
+        
+        # Add datetime function to the tool map
+        self.tool_map["get_current_datetime"] = get_current_datetime
 
     async def create_agent(self) -> str:
         """Create a health advisor agent and return its ID."""
@@ -161,6 +173,8 @@ class HealthAdvisorService:
             - "Your readings have improved so much this week! Treat yourself to a healthy smoothie today. 🥤"
 
             **Important:** Always be encouraging, never lecture. Act like a supportive friend who cares about their wellbeing.
+            
+            Also note that you have **a tool with the name get_current_datetime** to help you know the current date and time if needed
 
             First get their profile and recent readings, then give a short, personal, encouraging message.""",
             tools=self.tool_definitions,
@@ -215,7 +229,13 @@ class HealthAdvisorService:
                     for tool_call in tool_calls:
                         tool = self.tool_map[tool_call.function.name]
                         print(f"✅Calling tool: {tool_call.function.name}")
-                        result = await tool()
+                        
+                        # Handle datetime tool differently (it's a regular function, not async)
+                        if tool_call.function.name == "get_current_datetime":
+                            result = tool()  # Call without await
+                        else:
+                            result = await tool()  # MCP tools are async
+                        
                         tool_outputs.append({
                             "tool_call_id": tool_call.id,
                             "output": json.dumps(result)
