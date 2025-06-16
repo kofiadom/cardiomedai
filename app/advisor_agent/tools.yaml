@@ -1,8 +1,8 @@
 sources:
   my-sqlite-db:
     kind: "sqlite"
-    # database: "D:/global health studio/cardiomed-ai-1.0-dev/hypertension.db"
-    database: "/app/hypertension.db"
+    database: "D:/global health studio/cardiomed-ai-1.0-dev/hypertension.db"
+    # database: "/app/hypertension.db"
 
 tools:
   get_user_profile:

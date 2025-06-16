@@ -19,3 +19,6 @@ frontend/.env
 *.db
 *.sqlite
 *.sqlite3
+
+# Official knowledge base
+clinical_guideline.pdf

@@ -16,7 +16,7 @@ class HealthAdvisorService:
     def __init__(self, project_endpoint: str = None, toolbox_url: str = None):
         self.project_endpoint = project_endpoint or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
         # Use environment variable or default to toolbox service name
-        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://toolbox:5000")
+        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://127.0.0.1:5000")
         self.project_client = None
         self.toolbox_client = None
         self.tool_definitions = []
@@ -75,15 +75,35 @@ class HealthAdvisorService:
         self.toolbox_client = ToolboxClient(self.toolbox_url)
         mcp_tools = await self.toolbox_client.load_toolset("my_toolset")
 
-        # Try to get existing agent or create new one
+        # Convert MCP tools to Azure AI format FIRST
+        self.tool_definitions = []
+        for tool in mcp_tools:
+            tool_def = {
+                "type": "function",
+                "function": {
+                    "name": tool._name,
+                    "description": tool._description,
+                    "parameters": {
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                }
+            }
+            self.tool_definitions.append(tool_def)
+
+        # Store MCP tools for later use
+        self.tool_map = {tool._name: tool for tool in mcp_tools}
+
+        # Try to get existing agent or create new one (WITH TOOLS!)
         try:
             self.agent_id = os.getenv("HEALTH_ADVISOR_AGENT_ID")
             agent = self.project_client.agents.get_agent(self.agent_id)
             print(f"✅ Successfully connected to existing agent: {self.agent_id}")
         except Exception as e:
             print(f"Creating new agent as existing agent not found: {e}")
-            agent = await self.create_agent()
-            self.agent_id = agent.id
+            agent = await self.create_agent()  # Now has access to self.tool_definitions
+            self.agent_id = agent
             print(f"✅ Created new agent: {self.agent_id}")
 
         # Convert MCP tools to Azure AI format
@@ -194,6 +214,7 @@ class HealthAdvisorService:
                     tool_outputs = []
                     for tool_call in tool_calls:
                         tool = self.tool_map[tool_call.function.name]
+                        print(f"✅Calling tool: {tool_call.function.name}")
                         result = await tool()
                         tool_outputs.append({
                             "tool_call_id": tool_call.id,
