@@ -281,7 +281,7 @@ class KnowledgeAgentService:
     2. SECOND: If relevant, use database tools to get user-specific data  
     3. THIRD: Combine both sources for a comprehensive, personalized answer
 
-    Always use file_search FIRST to search your knowledge base, then use database tools if needed for user context. You also have to to get current date and time if needed"""
+    Always use file_search FIRST to search your knowledge base, then use database tools if needed for user context."""
 
             # Add message to thread
             message = self.project_client.agents.messages.create(
