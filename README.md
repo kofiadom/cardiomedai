@@ -103,6 +103,10 @@ Your personal hypertension expert that offers:
 
 The API will be available at `http://localhost:8000`.
 
+Windows users should use the following command to run the MCP Toolbox:
+& "$env:USERPROFILE\go\bin\genai-toolbox.exe" --tools-file "tools.yaml"
+  
+
 ## API Endpoints
 
 ### User Management

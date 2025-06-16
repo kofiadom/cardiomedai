@@ -22,6 +22,6 @@ dependencies = [
     "reportlab>=4.4.1",
     "requests>=2.32.3",
     "sqlalchemy>=2.0.41",
-    "toolbox-core>=0.2.0",
+    "toolbox-core>=0.2.1",
     "uvicorn>=0.34.2",
 ]
