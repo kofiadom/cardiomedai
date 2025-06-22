@@ -1,22 +1,19 @@
-﻿version: '3'
-
-services:
+﻿services:
   toolbox:
     image: us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
     ports:
       - "5000:5000"
     volumes:
       - ./app/advisor_agent/tools.yaml:/tools.yaml
-      - ./hypertension.db:/app/hypertension.db  # ✅ Mount the real DB here
+      - ./hypertension.db:/app/hypertension.db
     command: /toolbox --tools-file /tools.yaml --address 0.0.0.0
-
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"  # FastAPI
+      - "8000:8000"
     volumes:
       - ./hypertension.db:/app/hypertension.db
     environment:
@@ -27,8 +24,7 @@ services:
       - AZURE_AI_PROJECT_ENDPOINT=${AZURE_AI_PROJECT_ENDPOINT}
       - HEALTH_ADVISOR_AGENT_ID=${HEALTH_ADVISOR_AGENT_ID}
       - KNOWLEDGE_AGENT_ID=${KNOWLEDGE_AGENT_ID}
-      - TOOLBOX_URL=${TOOLBOX_URL}
-      # Service principal credentials
+      - TOOLBOX_URL=http://toolbox:5000
       - AZURE_TENANT_ID=${AZURE_TENANT_ID}
       - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
       - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}

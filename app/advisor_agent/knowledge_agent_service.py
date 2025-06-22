@@ -12,7 +12,7 @@ class KnowledgeAgentService:
     def __init__(self, project_endpoint: str = None, toolbox_url: str = None):
         self.project_endpoint = project_endpoint or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
         # Use environment variable or default to toolbox service name
-        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://127.0.0.1:5000")
+        self.toolbox_url = toolbox_url or os.getenv("TOOLBOX_URL", "http://toolbox:5000") #Docker
         self.project_client = None
         self.toolbox_client = None
         self.vector_store_id = None
@@ -52,7 +52,7 @@ class KnowledgeAgentService:
                 agent = self.project_client.agents.get_agent(self.agent_id)
                 print(f"✅ Successfully connected to existing agent: {self.agent_id}")
             else:
-                raise Exception("No agent ID found in environment")
+                raise Exception("No KNOWLEDGE_AGENT_ID environment variable found")
         except Exception as e:
             print(f"Creating new agent as existing agent not found: {e}")
             agent_id = await self.create_knowledge_agent(include_database_tools=True)
@@ -267,6 +267,8 @@ class KnowledgeAgentService:
                 print("⚠️ No agent ID found, creating new agent")
                 agent_id = await self.create_knowledge_agent(include_database_tools=include_user_context)
                 self.agent_id = agent_id
+            else:
+                print(f"✅ Using existing agent with ID: {self.agent_id}")
 
             # Create a thread for communication
             thread = self.project_client.agents.threads.create()
