@@ -180,7 +180,7 @@ class HealthAdvisorService:
             if not self.agent_id:
                 print("⚠️ No agent ID found, creating new agent")
                 agent = await self.create_agent()
-                self.agent_id = agent.id
+                self.agent_id = agent
             else:
                 print(f"✅ Using existing agent with ID: {self.agent_id}")
 
