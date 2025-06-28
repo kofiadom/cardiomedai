@@ -1,0 +1,11 @@
+# Use the original toolbox image as base
+FROM us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
+
+# Copy the database file into the image
+COPY hypertension.db /app/hypertension.db
+
+# Copy the tools configuration file into the image
+COPY app/advisor_agent/tools.yaml /tools.yaml
+
+# Command to run the toolbox service
+CMD ["/toolbox", "--tools-file", "/tools.yaml", "--address", "0.0.0.0"]

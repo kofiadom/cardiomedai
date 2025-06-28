@@ -23,6 +23,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
+# Copy the database file into the image
+COPY hypertension.db /app/hypertension.db
+
 # Expose port for FastAPI
 EXPOSE 8000
 
