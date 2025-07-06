@@ -15,12 +15,12 @@ try:
     # Try relative imports first (when run as module)
     from . import models
     from .database import engine
-    from .routers import users, blood_pressure, health_advisor, knowledge_agent
+    from .routers import users, blood_pressure, health_advisor, knowledge_agent, reminders
 except ImportError:
     # Fall back to absolute imports (when run directly)
     from app import models
     from app.database import engine
-    from app.routers import users, blood_pressure, health_advisor
+    from app.routers import users, blood_pressure, health_advisor, reminders
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -46,11 +46,12 @@ app.include_router(users.router)
 app.include_router(blood_pressure.router)
 app.include_router(health_advisor.router)
 app.include_router(knowledge_agent.router)
+app.include_router(reminders.router)
 
 @app.get("/")
 def read_root():
     return {
-        "message": "Welcome to the Hypertension Management API",
+        "message": "Welcome to the CardioMed AI API",
         "endpoints": {
             "users": "/users/",
             "blood_pressure_readings": "/bp/readings/",
@@ -58,7 +59,20 @@ def read_root():
             "health_advisor": "/health-advisor/advice",
             "health_advisor_status": "/health-advisor/status",
             "knowledge_agent": "/knowledge-agent/ask",
-            "knowledge_agent_status": "/knowledge-agent/status"
+            "knowledge_agent_status": "/knowledge-agent/status",
+            "medication_reminders": "/reminders/",
+            "upload_prescription": "/reminders/upload-prescription",
+            "upcoming_reminders": "/reminders/upcoming/",
+            "bp_reminder_schedule": "/reminders/bp-schedule",
+            "bp_reminders": "/reminders/bp-reminders/",
+            "upcoming_bp_reminders": "/reminders/bp-upcoming/",
+            "create_bp_reminder": "/reminders/bp-reminder/",
+            "update_bp_reminder": "/reminders/bp-reminder/{id}",
+            "delete_bp_reminder": "/reminders/bp-reminder/{id}",
+            "doctor_appointments": "/reminders/doctor-appointments/",
+            "create_doctor_appointment": "/reminders/doctor-appointment/",
+            "workouts": "/reminders/workouts/",
+            "create_workout": "/reminders/workout/"
         }
     }
 

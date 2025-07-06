@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional
 from datetime import datetime
 
@@ -84,3 +84,144 @@ class KnowledgeAgentResponse(BaseModel):
     thread_id: Optional[str] = None
     vector_store_id: Optional[str] = None
     status: str = "completed"
+
+# Medication Reminder schemas
+class MedicationScheduleItem(BaseModel):
+    datetime: datetime
+    dosage: str
+
+class MedicationReminderBase(BaseModel):
+    name: str
+    dosage: str
+    schedule_datetime: datetime
+    schedule_dosage: str
+    notes: Optional[str] = None
+
+class MedicationReminderCreate(MedicationReminderBase):
+    pass
+
+class MedicationReminderUpdate(BaseModel):
+    name: Optional[str] = None
+    dosage: Optional[str] = None
+    schedule_datetime: Optional[datetime] = None
+    schedule_dosage: Optional[str] = None
+    is_taken: Optional[bool] = None
+    notes: Optional[str] = None
+
+class MedicationReminder(MedicationReminderBase):
+    id: int
+    user_id: int
+    is_taken: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# OCR Medication Extraction schemas
+class MedicationOCRExtraction(BaseModel):
+    """
+    Structured model for medication prescription details extracted from images.
+    """
+    name: str = Field(description="The name of the medication")
+    dosage: str = Field(description="The composition or strength of the medication")
+    schedule: List[MedicationScheduleItem] = Field(description="List of scheduled doses with datetime and dosage")
+    interpretation: str = Field(description="Explanation of what was observed in the image and how the prescription information was interpreted")
+
+class MedicationOCRResponse(BaseModel):
+    """Response from OCR extraction with extracted data and approval status."""
+    extracted_data: MedicationOCRExtraction
+    total_reminders: int
+    message: str
+
+# BP Check Reminder schemas
+class BPCheckReminderBase(BaseModel):
+    reminder_datetime: datetime
+    notes: Optional[str] = None
+
+class BPCheckReminderCreate(BPCheckReminderBase):
+    bp_category: Optional[str] = "manual"  # Default to "manual" for user-created reminders
+
+class BPCheckReminderUpdate(BaseModel):
+    reminder_datetime: Optional[datetime] = None
+    bp_category: Optional[str] = None
+    notes: Optional[str] = None
+
+class BPCheckReminder(BPCheckReminderBase):
+    id: int
+    user_id: int
+    bp_category: str
+    is_completed: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# BP Reminder Generation schemas
+class BPReminderScheduleRequest(BaseModel):
+    user_id: int
+    systolic: int
+    diastolic: int
+    first_check_time: Optional[datetime] = None  # If None, use current time
+    preferred_morning_time: Optional[str] = "07:00"  # HH:MM format
+    preferred_evening_time: Optional[str] = "19:00"  # HH:MM format
+
+class BPReminderScheduleResponse(BaseModel):
+    category: str
+    category_description: str
+    total_reminders: int
+    advice: Optional[str] = None
+    reminders: List[BPCheckReminder]
+
+# Doctor Appointment Reminder schemas
+class DoctorAppointmentReminderBase(BaseModel):
+    appointment_datetime: datetime
+    doctor_name: str
+    appointment_type: Optional[str] = None
+    location: Optional[str] = None
+    notes: Optional[str] = None
+
+class DoctorAppointmentReminderCreate(DoctorAppointmentReminderBase):
+    pass
+
+class DoctorAppointmentReminderUpdate(BaseModel):
+    appointment_datetime: Optional[datetime] = None
+    doctor_name: Optional[str] = None
+    appointment_type: Optional[str] = None
+    location: Optional[str] = None
+    notes: Optional[str] = None
+
+class DoctorAppointmentReminder(DoctorAppointmentReminderBase):
+    id: int
+    user_id: int
+    is_completed: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Workout Reminder schemas
+class WorkoutReminderBase(BaseModel):
+    workout_datetime: datetime
+    workout_type: str
+    duration_minutes: Optional[int] = None
+    location: Optional[str] = None
+    notes: Optional[str] = None
+
+class WorkoutReminderCreate(WorkoutReminderBase):
+    pass
+
+class WorkoutReminderUpdate(BaseModel):
+    workout_datetime: Optional[datetime] = None
+    workout_type: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    location: Optional[str] = None
+    notes: Optional[str] = None
+
+class WorkoutReminder(WorkoutReminderBase):
+    id: int
+    user_id: int
+    is_completed: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

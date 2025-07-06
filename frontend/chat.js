@@ -1,5 +1,5 @@
-// Chat-specific JavaScript
-// API_BASE_URL and USER_ID are defined in script.js
+const API_BASE_URL = 'https://cardiomedai-api.onrender.com';
+const USER_ID = 1; // Default user ID for demo
 
 // Initialize chat when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -325,4 +325,10 @@ function addTestButton() {
     document.body.appendChild(testBtn);
 }
 
-// Call this in console if needed: addTestButton()
+// Expose functions to global scope for inline onclick
+window.goHome = goHome;
+window.sendMessage = sendMessage;
+window.clearChat = clearChat;
+window.toggleUserContext = toggleUserContext;
+window.askQuickQuestion = askQuickQuestion;
+window.toggleQuickQuestions = toggleQuickQuestions;

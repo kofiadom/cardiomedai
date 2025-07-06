@@ -1,5 +1,5 @@
 // Constants
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://cardiomedai-api.onrender.com';
 const USER_ID = 1; // Default user ID for demo
 
 // Initialize form when page loads
