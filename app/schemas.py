@@ -30,7 +30,7 @@ class User(UserBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Blood Pressure schemas
 class BloodPressureBase(BaseModel):
@@ -38,7 +38,6 @@ class BloodPressureBase(BaseModel):
     diastolic: int
     pulse: int
     notes: Optional[str] = None
-    device_id: Optional[str] = None
     interpretation: Optional[str] = None
 
 class BloodPressureCreate(BloodPressureBase):
@@ -50,7 +49,7 @@ class BloodPressure(BloodPressureBase):
     reading_time: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Device Upload schema for future OCR implementation
 class DeviceImageUpload(BaseModel):

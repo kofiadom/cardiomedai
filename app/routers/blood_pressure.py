@@ -74,7 +74,6 @@ def create_reading(
         diastolic=reading.diastolic,
         pulse=reading.pulse,
         notes=reading.notes,
-        device_id=reading.device_id,
         interpretation=interpretation
     )
     db.add(db_reading)
@@ -134,7 +133,6 @@ async def preview_bp_image(
             "diastolic": diastolic,
             "pulse": pulse,
             "notes": notes,
-            "device_id": f"Image Upload: {image.filename}",
             "interpretation": interpretation,
             "user_id": user_id,
             "preview": True  # Indicates this is preview data, not saved
@@ -175,7 +173,6 @@ async def upload_bp_image(
             diastolic=diastolic,
             pulse=pulse,
             notes=notes,  # Keep notes as provided by user (can be None)
-            device_id=f"Image Upload: {image.filename}",
             interpretation=interpretation
         )
 
@@ -210,7 +207,6 @@ async def save_ocr_reading(
         diastolic = reading_data.get("diastolic")
         pulse = reading_data.get("pulse")
         notes = reading_data.get("notes")
-        device_id = reading_data.get("device_id")
         interpretation = reading_data.get("interpretation")
 
         # Verify the user exists
@@ -225,7 +221,6 @@ async def save_ocr_reading(
             diastolic=diastolic,
             pulse=pulse,
             notes=notes,
-            device_id=device_id,
             interpretation=interpretation
         )
 
@@ -261,7 +256,6 @@ async def export_csv(user_id: int, db: Session = Depends(get_db)):
             'Diastolic': reading.diastolic,
             'Pulse': reading.pulse,
             'Status': reading.interpretation,
-            'Device': reading.device_id or 'Manual Entry',
             'Notes': reading.notes or ''
         })
     

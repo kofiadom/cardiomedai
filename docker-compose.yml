@@ -5,7 +5,12 @@
       - "5000:5000"
     volumes:
       - ./app/advisor_agent/tools.yaml:/tools.yaml
-      - ./hypertension.db:/app/hypertension.db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - DB_HOST=cardiomed-ai-db-server.database.windows.net
+      - DB_NAME=cardiomed-ai-db
+      - DB_USER=harold
+      - DB_PASSWORD=${DB_PASSWORD}
     command: /toolbox --tools-file /tools.yaml --address 0.0.0.0
 
   backend:
@@ -14,9 +19,8 @@
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - ./hypertension.db:/app/hypertension.db
     environment:
+      - DATABASE_URL=${DATABASE_URL}
       - AZURE_API_KEY=${AZURE_API_KEY}
       - AZURE_ENDPOINT=${AZURE_ENDPOINT}
       - AZURE_API_VERSION=${AZURE_API_VERSION}

@@ -8,12 +8,12 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    full_name = Column(String)
+    username = Column(String(50), unique=True, index=True)
+    email = Column(String(100), unique=True, index=True)
+    hashed_password = Column(String(255))
+    full_name = Column(String(100))
     age = Column(Integer)
-    gender = Column(String)
+    gender = Column(String(10))
     height = Column(Float)  # in cm
     weight = Column(Float)  # in kg
     medical_conditions = Column(Text, nullable=True)
@@ -36,8 +36,7 @@ class BloodPressure(Base):
     pulse = Column(Integer)
     reading_time = Column(DateTime, default=datetime.datetime.utcnow)
     notes = Column(Text, nullable=True)
-    device_id = Column(String, nullable=True)
-    interpretation = Column(String, nullable=True)
+    interpretation = Column(String(500), nullable=True)
 
     user = relationship("User", back_populates="blood_pressure_readings")
 
@@ -47,10 +46,10 @@ class MedicationReminder(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    name = Column(String, nullable=False)  # Medication name
-    dosage = Column(String, nullable=False)  # Dosage description
+    name = Column(String(100), nullable=False)  # Medication name
+    dosage = Column(String(100), nullable=False)  # Dosage description
     schedule_datetime = Column(DateTime, nullable=False)  # When to take the medication
-    schedule_dosage = Column(String, nullable=False)  # How much to take at this time
+    schedule_dosage = Column(String(100), nullable=False)  # How much to take at this time
     is_taken = Column(Boolean, default=False)  # Whether this dose has been taken
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     notes = Column(Text, nullable=True)  # Optional notes
@@ -64,7 +63,7 @@ class BPCheckReminder(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     reminder_datetime = Column(DateTime, nullable=False)  # When to check BP
-    bp_category = Column(String, nullable=False)  # normal, elevated, stage_1, stage_2, crisis
+    bp_category = Column(String(20), nullable=False)  # normal, elevated, stage_1, stage_2, crisis
     is_completed = Column(Boolean, default=False)  # Whether BP was checked
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     notes = Column(Text, nullable=True)  # Additional context
@@ -78,9 +77,9 @@ class DoctorAppointmentReminder(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     appointment_datetime = Column(DateTime, nullable=False)  # When the appointment is scheduled
-    doctor_name = Column(String, nullable=False)  # Name of the doctor
-    appointment_type = Column(String, nullable=True)  # Type of appointment (checkup, consultation, etc.)
-    location = Column(String, nullable=True)  # Clinic/hospital location
+    doctor_name = Column(String(100), nullable=False)  # Name of the doctor
+    appointment_type = Column(String(50), nullable=True)  # Type of appointment (checkup, consultation, etc.)
+    location = Column(String(200), nullable=True)  # Clinic/hospital location
     is_completed = Column(Boolean, default=False)  # Whether appointment was attended
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     notes = Column(Text, nullable=True)  # Additional notes
@@ -94,9 +93,9 @@ class WorkoutReminder(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     workout_datetime = Column(DateTime, nullable=False)  # When to workout
-    workout_type = Column(String, nullable=False)  # Type of workout (cardio, strength, yoga, etc.)
+    workout_type = Column(String(50), nullable=False)  # Type of workout (cardio, strength, yoga, etc.)
     duration_minutes = Column(Integer, nullable=True)  # Planned duration in minutes
-    location = Column(String, nullable=True)  # Gym, home, park, etc.
+    location = Column(String(100), nullable=True)  # Gym, home, park, etc.
     is_completed = Column(Boolean, default=False)  # Whether workout was completed
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     notes = Column(Text, nullable=True)  # Additional notes

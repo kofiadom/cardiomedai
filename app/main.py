@@ -20,7 +20,7 @@ except ImportError:
     # Fall back to absolute imports (when run directly)
     from app import models
     from app.database import engine
-    from app.routers import users, blood_pressure, health_advisor, reminders
+    from app.routers import users, blood_pressure, health_advisor, knowledge_agent, reminders
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)

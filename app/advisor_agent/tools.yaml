@@ -1,21 +1,24 @@
 sources:
-  my-sqlite-db:
-    kind: "sqlite"
-    # database: "D:/global health studio/cardiomed-ai-1.0-dev/hypertension.db"
-    database: "/app/hypertension.db" #Docker
+  my-sql-db:
+    kind: "mssql"
+    host: "${DB_HOST}"
+    database: "${DB_NAME}"
+    user: "${DB_USER}"
+    password: "${DB_PASSWORD}"
+    port: 1433
 
 tools:
   get_user_profile:
-    kind: "sqlite-sql"
-    source: "my-sqlite-db"
+    kind: "mssql-sql"
+    source: "my-sql-db"
     description: "Get the user's health profile including target BP, medical conditions, and medications"
     statement: "SELECT * FROM users WHERE id = 1"
 
   get_bp_history:
-    kind: "sqlite-sql"
-    source: "my-sqlite-db"
+    kind: "mssql-sql"
+    source: "my-sql-db"
     description: "Get user's blood pressure history with notes, ordered by date"
-    statement: "SELECT systolic, diastolic, pulse, reading_time, notes FROM blood_pressure_readings WHERE user_id = 1 ORDER BY reading_time DESC LIMIT 20"
+    statement: "SELECT TOP 20 systolic, diastolic, pulse, reading_time, notes FROM blood_pressure_readings WHERE user_id = 1 ORDER BY reading_time DESC"
 
 toolsets:
     my_toolset:

@@ -47,7 +47,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = db.query(models.User).offset(skip).limit(limit).all()
+    users = db.query(models.User).order_by(models.User.id).offset(skip).limit(limit).all()
     return users
 
 @router.get("/{user_id}", response_model=schemas.User)
