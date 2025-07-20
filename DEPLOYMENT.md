@@ -95,9 +95,42 @@ docker-compose up --build
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
+## Render Deployment
+
+### MCP Toolbox on Render
+
+The `Dockerfile-toolbox` is configured for secure deployment on Render using environment variable substitution.
+
+**Required Environment Variables for Render:**
+```
+DB_HOST=cardiomed-ai-db-server.database.windows.net
+DB_NAME=cardiomed-ai-db
+DB_USER=harold
+DB_PASSWORD=your_actual_password_here
+```
+
+**How it works:**
+1. The Dockerfile copies `tools.yaml` as a template
+2. At runtime, `envsubst` replaces `${DB_HOST}`, `${DB_NAME}`, etc. with actual values
+3. The toolbox starts with the processed configuration
+4. **No credentials are stored in the Docker image or Git repository**
+
+### FastAPI Backend on Render
+
+Set the same environment variables plus:
+```
+AZURE_API_KEY=your_azure_api_key
+AZURE_ENDPOINT=your_azure_endpoint
+AZURE_AI_PROJECT_ENDPOINT=your_project_endpoint
+HEALTH_ADVISOR_AGENT_ID=your_agent_id
+KNOWLEDGE_AGENT_ID=your_knowledge_agent_id
+TOOLBOX_URL=https://your-toolbox-service.onrender.com
+```
+
 ## Production Considerations
 
 1. **Security**: Use Azure Key Vault for secrets in production
 2. **Scaling**: Consider Azure Container Instances or AKS
 3. **Monitoring**: Add health checks and logging
 4. **Backup**: Ensure Azure SQL Database backup is configured
+5. **Environment Variables**: Never commit credentials to Git - always use environment variables

@@ -15,6 +15,10 @@ frontend/.env
 .env.*
 !.env.example
 
+# Tools configuration with hardcoded credentials (if any)
+**/tools-render.yaml
+**/tools-production.yaml
+
 # Database files
 *.sqlite
 *.sqlite3

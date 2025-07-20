@@ -4,26 +4,29 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies including ODBC driver for SQL Server
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     wget \
-    unixodbc-dev \
     gnupg2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Microsoft ODBC Driver 18 for SQL Server
-# Try repository method first, fallback to direct download if needed
-RUN (curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
-    && echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/11/prod bullseye main" > /etc/apt/sources.list.d/mssql-release.list \
+# Install ODBC dependencies first to avoid conflicts
+RUN apt-get update && apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    odbcinst \
+    odbcinst1debian2 \
+    libodbc1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Microsoft ODBC Driver 18 for SQL Server using direct download method
+RUN curl -o msodbcsql18.deb -L "https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb" \
+    && DEBIAN_FRONTEND=noninteractive ACCEPT_EULA=Y dpkg -i msodbcsql18.deb || true \
     && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18) \
-    || (echo "Repository method failed, trying direct download..." \
-    && curl -o msodbcsql18.deb -L "https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb" \
-    && ACCEPT_EULA=Y dpkg -i msodbcsql18.deb \
     && apt-get install -f -y \
-    && rm msodbcsql18.deb) \
+    && rm msodbcsql18.deb \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements from pyproject.toml
