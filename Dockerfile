@@ -10,10 +10,20 @@ RUN apt-get update && apt-get install -y \
     curl \
     wget \
     unixodbc-dev \
-    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    gnupg2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Microsoft ODBC Driver 18 for SQL Server
+# Try repository method first, fallback to direct download if needed
+RUN (curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+    && echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/11/prod bullseye main" > /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18) \
+    || (echo "Repository method failed, trying direct download..." \
+    && curl -o msodbcsql18.deb -L "https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb" \
+    && ACCEPT_EULA=Y dpkg -i msodbcsql18.deb \
+    && apt-get install -f -y \
+    && rm msodbcsql18.deb) \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements from pyproject.toml
