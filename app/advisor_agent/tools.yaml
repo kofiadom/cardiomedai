@@ -1,10 +1,10 @@
 sources:
   my-sql-db:
     kind: "mssql"
-    host: "${DB_HOST}"
-    database: "${DB_NAME}"
-    user: "${DB_USER}"
-    password: "${DB_PASSWORD}"
+    host: "cardiomed-ai-db-server.database.windows.net"
+    database: "cardiomed-ai-db"
+    user: "harold"
+    password: "realControlissurgical@911"
     port: 1433
 
 tools:
