@@ -7,9 +7,9 @@
       - ./app/advisor_agent/tools.yaml:/tools.yaml
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - DB_HOST=cardiomed-ai-db-server.database.windows.net
-      - DB_NAME=cardiomed-ai-db
-      - DB_USER=harold
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     command: /toolbox --tools-file /tools.yaml --address 0.0.0.0
 

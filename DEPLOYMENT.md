@@ -101,13 +101,15 @@ docker-compose up --build
 
 The `Dockerfile-toolbox` is configured for secure deployment on Render using environment variable substitution.
 
-**Required Environment Variables for Render:**
+**Required Environment Variables for Render MCP Toolbox:**
 ```
 DB_HOST=cardiomed-ai-db-server.database.windows.net
 DB_NAME=cardiomed-ai-db
 DB_USER=harold
-DB_PASSWORD=your_actual_password_here
+DB_PASSWORD=realControlissurgical@911
 ```
+
+**Note:** These exact variable names (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`) must be used as they match the placeholders in `tools.yaml`.
 
 **How it works:**
 1. The Dockerfile copies `tools.yaml` as a template
