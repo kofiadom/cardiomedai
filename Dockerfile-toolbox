@@ -1,0 +1,12 @@
+﻿# Dockerfile for MCP Toolbox deployment on Render
+# This builds a container with the toolbox and Azure SQL Database configuration
+
+# Use the original toolbox image as base
+FROM us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
+
+# Copy the tools configuration file with environment variable placeholders
+COPY app/advisor_agent/tools.yaml /tools.yaml
+
+# Command to run the toolbox service
+# Environment variables (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD) must be set in Render
+CMD [" /toolbox\, \--tools-file\, \/tools.yaml\, \--address\, \0.0.0.0\]
