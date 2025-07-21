@@ -9,4 +9,4 @@ COPY app/advisor_agent/tools.yaml /tools.yaml
 
 # Command to run the toolbox service
 # Environment variables (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD) must be set in Render
-CMD [" /toolbox\, \--tools-file\, \/tools.yaml\, \--address\, \0.0.0.0\]
+CMD ["/toolbox", "--tools-file", "/tools.yaml", "--address", "0.0.0.0"]
