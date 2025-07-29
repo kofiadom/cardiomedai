@@ -211,16 +211,50 @@ class KnowledgeAgentService:
         if include_database_tools and self.db_tool_definitions:
             instructions += """
 
-**Additional Context:** You also have access to the user's blood pressure data and profile through database tools. When relevant to the question, you can:
-- Use database tools to get the user's recent blood pressure readings
-- Reference their data to provide personalized context
+**Additional Context:** You have access to comprehensive user health data through database tools. When relevant to the question, you can:
+
+**Available Database Tools:**
+
+**User & Health Overview:**
+- get_user_profile: Complete user profile and health information
+- get_health_summary: Comprehensive health activity overview
+- get_bp_statistics: Statistical analysis of blood pressure trends
+
+**Blood Pressure Data:**
+- get_bp_history: Full blood pressure history with notes
+- get_recent_bp_readings: Last 5 BP readings for trend analysis
+
+**Medication Management:**
+- get_medication_reminders: All medication schedules
+- get_pending_medication_reminders: Medications not yet taken
+- get_medication_adherence: Adherence statistics by medication
+- get_recent_medication_activity: Recent medication activity
+
+**Health Reminders & Activities:**
+- get_upcoming_reminders: All upcoming reminders (next 24 hours)
+- get_bp_check_reminders: Blood pressure check schedules
+- get_pending_bp_check_reminders: Pending BP checks
+- get_doctor_appointment_reminders: All doctor appointments
+- get_upcoming_doctor_appointments: Upcoming appointments
+- get_workout_reminders: All workout schedules
+- get_pending_workout_reminders: Pending workouts
+
+**How to Use These Tools:**
+- Use database tools to get the user's personal health context
+- Reference their actual data to provide personalized education
 - Relate general information from your knowledge base to their specific situation
-- Provide more targeted educational content based on their data
+- Provide targeted advice based on their medication adherence, BP trends, etc.
+- Help them understand their data in the context of clinical guidelines
 
 **Tool Usage Priority:**
-1. FIRST: Use file_search to get information from knowledge base
-2. SECOND: Use database tools if user-specific context is needed
-3. THIRD: Combine both sources for comprehensive, personalized answers"""
+1. FIRST: Use file_search to get evidence-based information from knowledge base
+2. SECOND: Use relevant database tools to get user-specific context
+3. THIRD: Combine both sources for comprehensive, personalized educational answers
+
+**Examples of Personalized Responses:**
+- "Based on your recent BP readings averaging 135/85, the clinical guidelines suggest..." (combines their data with knowledge base)
+- "I see you've been taking your medication consistently - that's excellent! The research shows..." (acknowledges their adherence data)
+- "Your upcoming doctor appointment is perfect timing to discuss..." (references their appointment data)"""
 
         try:
             # Get model deployment name from environment
