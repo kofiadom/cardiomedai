@@ -20,7 +20,118 @@ tools:
     description: "Get user's blood pressure history with notes, ordered by date"
     statement: "SELECT TOP 20 systolic, diastolic, pulse, reading_time, notes FROM blood_pressure_readings WHERE user_id = 1 ORDER BY reading_time DESC"
 
+  get_recent_bp_readings:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get the most recent blood pressure readings for trend analysis"
+    statement: "SELECT TOP 5 systolic, diastolic, pulse, reading_time FROM blood_pressure_readings WHERE user_id = 1 ORDER BY reading_time DESC"
+
+  get_medication_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get all medication reminders for the user"
+    statement: "SELECT * FROM medication_reminders WHERE user_id = 1 ORDER BY schedule_datetime"
+
+  get_pending_medication_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get pending (not taken) medication reminders"
+    statement: "SELECT * FROM medication_reminders WHERE user_id = 1 AND is_taken = 0 ORDER BY schedule_datetime"
+
+  get_bp_check_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get blood pressure check reminders for the user"
+    statement: "SELECT * FROM bp_check_reminders WHERE user_id = 1 ORDER BY reminder_datetime"
+
+  get_pending_bp_check_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get pending (not completed) BP check reminders"
+    statement: "SELECT * FROM bp_check_reminders WHERE user_id = 1 AND is_completed = 0 ORDER BY reminder_datetime"
+
+  get_doctor_appointment_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get doctor appointment reminders for the user"
+    statement: "SELECT * FROM doctor_appointment_reminders WHERE user_id = 1 ORDER BY appointment_datetime"
+
+  get_upcoming_doctor_appointments:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get upcoming doctor appointments (not completed)"
+    statement: "SELECT * FROM doctor_appointment_reminders WHERE user_id = 1 AND is_completed = 0 ORDER BY appointment_datetime"
+
+  get_workout_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get workout reminders for the user"
+    statement: "SELECT * FROM workout_reminders WHERE user_id = 1 ORDER BY workout_datetime"
+
+  get_pending_workout_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get pending (not completed) workout reminders"
+    statement: "SELECT * FROM workout_reminders WHERE user_id = 1 AND is_completed = 0 ORDER BY workout_datetime"
+
+  get_upcoming_reminders:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get all upcoming reminders for the next 24 hours"
+    statement: "SELECT 'medication' as reminder_type, name as title, schedule_datetime as reminder_time, dosage as details FROM medication_reminders WHERE user_id = 1 AND is_taken = 0 AND schedule_datetime >= GETDATE() AND schedule_datetime <= DATEADD(day, 1, GETDATE()) UNION ALL SELECT 'bp_check' as reminder_type, 'Blood Pressure Check' as title, reminder_datetime as reminder_time, bp_category as details FROM bp_check_reminders WHERE user_id = 1 AND is_completed = 0 AND reminder_datetime >= GETDATE() AND reminder_datetime <= DATEADD(day, 1, GETDATE()) UNION ALL SELECT 'doctor_appointment' as reminder_type, doctor_name as title, appointment_datetime as reminder_time, appointment_type as details FROM doctor_appointment_reminders WHERE user_id = 1 AND is_completed = 0 AND appointment_datetime >= GETDATE() AND appointment_datetime <= DATEADD(day, 1, GETDATE()) UNION ALL SELECT 'workout' as reminder_type, workout_type as title, workout_datetime as reminder_time, CAST(duration_minutes AS VARCHAR) + ' minutes' as details FROM workout_reminders WHERE user_id = 1 AND is_completed = 0 AND workout_datetime >= GETDATE() AND workout_datetime <= DATEADD(day, 1, GETDATE()) ORDER BY reminder_time"
+
+  get_bp_statistics:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get blood pressure statistics and trends for health analysis"
+    statement: "SELECT COUNT(*) as total_readings, AVG(CAST(systolic AS FLOAT)) as avg_systolic, AVG(CAST(diastolic AS FLOAT)) as avg_diastolic, AVG(CAST(pulse AS FLOAT)) as avg_pulse, MIN(reading_time) as first_reading, MAX(reading_time) as latest_reading FROM blood_pressure_readings WHERE user_id = 1"
+
+  get_recent_medication_activity:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get recent medication reminder activity and adherence"
+    statement: "SELECT TOP 10 name, schedule_datetime, is_taken, created_at FROM medication_reminders WHERE user_id = 1 ORDER BY created_at DESC"
+
+  get_medication_adherence:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get medication adherence statistics"
+    statement: "SELECT name, COUNT(*) as total_doses, SUM(CASE WHEN is_taken = 1 THEN 1 ELSE 0 END) as taken_doses, CAST(SUM(CASE WHEN is_taken = 1 THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100 as adherence_percentage FROM medication_reminders WHERE user_id = 1 GROUP BY name"
+
+  get_health_summary:
+    kind: "mssql-sql"
+    source: "my-sql-db"
+    description: "Get comprehensive health summary with recent activities"
+    statement: "SELECT 'bp_readings' as activity_type, COUNT(*) as count, MAX(reading_time) as last_activity FROM blood_pressure_readings WHERE user_id = 1 UNION ALL SELECT 'medications_taken' as activity_type, SUM(CASE WHEN is_taken = 1 THEN 1 ELSE 0 END) as count, MAX(schedule_datetime) as last_activity FROM medication_reminders WHERE user_id = 1 UNION ALL SELECT 'bp_checks_completed' as activity_type, SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as count, MAX(reminder_datetime) as last_activity FROM bp_check_reminders WHERE user_id = 1 UNION ALL SELECT 'workouts_completed' as activity_type, SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) as count, MAX(workout_datetime) as last_activity FROM workout_reminders WHERE user_id = 1"
+
 toolsets:
     my_toolset:
+        # User Profile
         - get_user_profile
+
+        # Blood Pressure
         - get_bp_history
+        - get_recent_bp_readings
+        - get_bp_statistics
+
+        # Medication Reminders
+        - get_medication_reminders
+        - get_pending_medication_reminders
+        - get_recent_medication_activity
+        - get_medication_adherence
+
+        # BP Check Reminders
+        - get_bp_check_reminders
+        - get_pending_bp_check_reminders
+
+        # Doctor Appointments
+        - get_doctor_appointment_reminders
+        - get_upcoming_doctor_appointments
+
+        # Workout Reminders
+        - get_workout_reminders
+        - get_pending_workout_reminders
+
+        # Combined Views
+        - get_upcoming_reminders
+        - get_health_summary
