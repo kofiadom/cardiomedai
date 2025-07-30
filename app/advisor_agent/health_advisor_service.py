@@ -95,7 +95,19 @@ class HealthAdvisorService:
             self.tool_definitions.append(tool_def)
             
         # Add datetime tool
-        self.tool_definitions.append(datetime_tool_def.definitions)
+        datetime_tool_dict = {
+            "type": "function",
+            "function": {
+                "name": "get_current_datetime",
+                "description": "Get the current date and time in YYYY-MM-DD HH:MM:SS format",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            }
+        }
+        self.tool_definitions.append(datetime_tool_dict)
         
         # Store MCP tools for later use
         self.tool_map = {tool._name: tool for tool in mcp_tools}
@@ -104,8 +116,14 @@ class HealthAdvisorService:
         self.tool_map["get_current_datetime"] = get_current_datetime
 
         print(f"✅ Total tools for agent: {len(self.tool_definitions)}")
-        for tool in self.tool_definitions:
-            print(f"   - {tool}")
+        for i, tool in enumerate(self.tool_definitions):
+            print(f"   - Tool {i}: {tool.get('function', {}).get('name', 'unknown')} (type: {type(tool)})")
+
+        # Debug: Check if all tools are properly formatted
+        for i, tool in enumerate(self.tool_definitions):
+            if not isinstance(tool, dict) or 'type' not in tool or 'function' not in tool:
+                print(f"❌ Invalid tool format at index {i}: {tool}")
+                raise ValueError(f"Tool at index {i} is not properly formatted: {tool}")
 
         # Try to get existing agent or create new one
         try:
