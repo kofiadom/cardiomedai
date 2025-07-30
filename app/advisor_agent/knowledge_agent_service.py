@@ -6,6 +6,7 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import FilePurpose, FileSearchTool
 from toolbox_core import ToolboxClient
+from .datetime_tool import get_current_datetime
 
 
 class KnowledgeAgentService:
@@ -176,9 +177,25 @@ class KnowledgeAgentService:
         else:
             print("❌ Database tools not added")
 
+        # Add datetime tool
+        datetime_tool_dict = {
+            "type": "function",
+            "function": {
+                "name": "get_current_datetime",
+                "description": "Get the current date and time in YYYY-MM-DD HH:MM:SS format",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": []
+                }
+            }
+        }
+        tools.append(datetime_tool_dict)
+        print("✅ Added datetime tool")
+
         print(f"🛠️ Total tools for agent: {len(tools)}")
         for tool in tools:
-            print(f"   - {tool}")
+            print(f"   - {tool.get('function', {}).get('name', 'unknown')} (type: {tool.get('type', 'unknown')})")
 
         # Create agent instructions
         instructions = """You are a friendly and knowledgeable hypertension education assistant. Your role is to:
@@ -254,7 +271,10 @@ class KnowledgeAgentService:
 **Examples of Personalized Responses:**
 - "Based on your recent BP readings averaging 135/85, the clinical guidelines suggest..." (combines their data with knowledge base)
 - "I see you've been taking your medication consistently - that's excellent! The research shows..." (acknowledges their adherence data)
-- "Your upcoming doctor appointment is perfect timing to discuss..." (references their appointment data)"""
+- "Your upcoming doctor appointment is perfect timing to discuss..." (references their appointment data)
+
+**Additional Tools Available:**
+- get_current_datetime: Use this to get the current date and time when providing time-sensitive advice or scheduling recommendations"""
 
         try:
             # Get model deployment name from environment
@@ -337,19 +357,34 @@ class KnowledgeAgentService:
                 await asyncio.sleep(1)  # Use async sleep 
                 run = self.project_client.agents.runs.get(thread_id=thread.id, run_id=run.id) 
  
-                if run.status == "requires_action": 
-                    tool_calls = run.required_action.submit_tool_outputs.tool_calls 
-                    tool_outputs = [] 
-                    for tool_call in tool_calls: 
-                        # Get the actual MCP tool and call it 
-                        tool = self.db_tool_map[tool_call.function.name]
-                        print(f"✅Calling tool: {tool_call.function.name}")
-                        result = await tool()  # MCP tools are async
-                        
-                        tool_outputs.append({
-                            "tool_call_id": tool_call.id,
-                            "output": json.dumps(result)
-                        })
+                if run.status == "requires_action":
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    tool_outputs = []
+                    for tool_call in tool_calls:
+                        function_name = tool_call.function.name
+                        print(f"✅ Calling tool: {function_name}")
+
+                        # Handle datetime tool
+                        if function_name == "get_current_datetime":
+                            result = get_current_datetime()
+                            tool_outputs.append({
+                                "tool_call_id": tool_call.id,
+                                "output": result
+                            })
+                        # Handle database tools
+                        elif function_name in self.db_tool_map:
+                            tool = self.db_tool_map[function_name]
+                            result = await tool()  # MCP tools are async
+                            tool_outputs.append({
+                                "tool_call_id": tool_call.id,
+                                "output": json.dumps(result)
+                            })
+                        else:
+                            print(f"❌ Unknown tool: {function_name}")
+                            tool_outputs.append({
+                                "tool_call_id": tool_call.id,
+                                "output": f"Error: Unknown tool {function_name}"
+                            })
                      
                     run = self.project_client.agents.runs.submit_tool_outputs( 
                         thread_id=thread.id, 
