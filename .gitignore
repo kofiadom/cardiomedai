@@ -22,6 +22,3 @@ frontend/.env
 # Database files
 *.sqlite
 *.sqlite3
-
-# Official knowledge base
-clinical_guideline.pdf
