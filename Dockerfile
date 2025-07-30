@@ -41,6 +41,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
+# Ensure knowledge base directory is copied (explicit copy for Docker)
+COPY app/advisor_agent/knowledge_base/ /app/app/advisor_agent/knowledge_base/
+
 # Expose port for FastAPI
 EXPOSE 8000
 
