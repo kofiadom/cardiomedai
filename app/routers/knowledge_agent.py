@@ -38,11 +38,51 @@ async def get_knowledge_agent_service() -> KnowledgeAgentService:
         
         # Look for knowledge base files in the advisor_agent/knowledge_base directory
         knowledge_base_dir = os.path.join(os.path.dirname(__file__), "..", "advisor_agent", "knowledge_base")
-        if os.path.exists(knowledge_base_dir):
-            for file in os.listdir(knowledge_base_dir):
-                if file.endswith(('.pdf', '.txt', '.docx', '.md', '.html', '.json')):  # Added more supported formats
-                    knowledge_files.append(os.path.join(knowledge_base_dir, file))
-        
+        abs_knowledge_base_dir = os.path.abspath(knowledge_base_dir)
+
+        print(f"🔍 Current working directory: {os.getcwd()}")
+        print(f"🔍 __file__ location: {__file__}")
+        print(f"🔍 dirname(__file__): {os.path.dirname(__file__)}")
+        print(f"🔍 Relative knowledge base dir: {knowledge_base_dir}")
+        print(f"🔍 Absolute knowledge base dir: {abs_knowledge_base_dir}")
+        print(f"🔍 Directory exists: {os.path.exists(abs_knowledge_base_dir)}")
+
+        # Try both relative and absolute paths
+        for dir_path in [knowledge_base_dir, abs_knowledge_base_dir]:
+            if os.path.exists(dir_path):
+                print(f"✅ Found directory: {dir_path}")
+                try:
+                    files_in_dir = os.listdir(dir_path)
+                    print(f"🔍 Files in {dir_path}: {files_in_dir}")
+
+                    for file in files_in_dir:
+                        if file.endswith(('.pdf', '.txt', '.docx', '.md', '.html', '.json')):
+                            full_path = os.path.join(dir_path, file)
+                            if os.path.exists(full_path):
+                                knowledge_files.append(full_path)
+                                print(f"✅ Added knowledge file: {full_path}")
+                            else:
+                                print(f"❌ File exists in listing but not accessible: {full_path}")
+                    break  # Use the first working directory
+                except Exception as e:
+                    print(f"❌ Error reading directory {dir_path}: {e}")
+            else:
+                print(f"❌ Directory not found: {dir_path}")
+
+        # Fallback: try to find knowledge base directory anywhere in the app
+        if not knowledge_files:
+            print("🔍 Searching for knowledge base directory in entire app...")
+            app_root = "/app"  # Docker working directory
+            for root, dirs, files in os.walk(app_root):
+                if "knowledge_base" in root:
+                    print(f"🔍 Found knowledge_base directory: {root}")
+                    for file in files:
+                        if file.endswith(('.pdf', '.txt', '.docx', '.md', '.html', '.json')):
+                            full_path = os.path.join(root, file)
+                            knowledge_files.append(full_path)
+                            print(f"✅ Found knowledge file: {full_path}")
+
+        print(f"🔍 Total knowledge files to initialize: {len(knowledge_files)}")
         await _knowledge_agent_service.initialize(knowledge_files=knowledge_files)
     return _knowledge_agent_service
 
