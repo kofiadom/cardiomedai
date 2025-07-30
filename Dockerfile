@@ -41,8 +41,17 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Ensure knowledge base directory is copied (explicit copy for Docker)
-COPY app/advisor_agent/knowledge_base/ /app/app/advisor_agent/knowledge_base/
+# Debug: Check what was copied and create knowledge base directory
+RUN echo "=== Debugging Docker Copy ===" && \
+    echo "Contents of /app:" && \
+    ls -la /app/ && \
+    echo "Contents of /app/app:" && \
+    ls -la /app/app/ && \
+    echo "Contents of /app/app/advisor_agent:" && \
+    ls -la /app/app/advisor_agent/ && \
+    echo "Creating knowledge base directory..." && \
+    mkdir -p /app/app/advisor_agent/knowledge_base && \
+    echo "Knowledge base directory created"
 
 # Expose port for FastAPI
 EXPOSE 8000
