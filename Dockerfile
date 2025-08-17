@@ -17,8 +17,9 @@ RUN apt-get update && apt-get install -y \
     unixodbc \
     unixodbc-dev \
     odbcinst \
-    odbcinst1debian2 \
-    libodbc1 \
+    unixodbc-common \
+    libodbcinst2 \
+    libodbc2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Microsoft ODBC Driver 18 for SQL Server using direct download method
