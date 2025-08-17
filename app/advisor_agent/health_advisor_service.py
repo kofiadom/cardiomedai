@@ -125,22 +125,44 @@ class HealthAdvisorService:
                 print(f"❌ Invalid tool format at index {i}: {tool}")
                 raise ValueError(f"Tool at index {i} is not properly formatted: {tool}")
 
-        # Try to get existing agent or create new one
-        try:
-            self.agent_id = os.getenv("HEALTH_ADVISOR_AGENT_ID")
-            if self.agent_id:
-                agent = self.project_client.agents.get_agent(self.agent_id)
-                print(f"✅ Successfully connected to existing agent: {self.agent_id}")
+        # Try to get existing agent or create new one with better error handling
+        # Use environment variable or fallback to known working agent ID
+        self.agent_id = os.getenv("HEALTH_ADVISOR_AGENT_ID") or "asst_phjVsezosQqDE3XCufhu1oZd"
+        
+        if self.agent_id:
+            print(f"🔍 Attempting to connect to agent: {self.agent_id}")
+            if self.agent_id == "asst_phjVsezosQqDE3XCufhu1oZd":
+                print("📌 Using hardcoded fallback agent ID")
             else:
-                raise Exception("No HEALTH_ADVISOR_AGENT_ID environment variable found")
-        except Exception as e:
-            print(f"Creating new agent as existing agent not found: {e}")
+                print("📌 Using agent ID from environment variable")
+            # Try to connect to existing agent with retry logic
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    agent = self.project_client.agents.get_agent(self.agent_id)
+                    print(f"✅ Successfully connected to existing agent: {self.agent_id}")
+                    break
+                except Exception as e:
+                    print(f"⚠️ Attempt {attempt + 1}/{max_retries} failed to connect to agent {self.agent_id}: {e}")
+                    if attempt == max_retries - 1:
+                        print(f"❌ Failed to connect to existing agent after {max_retries} attempts")
+                        print(f"🔄 Creating new agent as fallback...")
+                        agent = await self.create_agent()
+                        self.agent_id = agent
+                        print(f"✅ Created new agent: {self.agent_id}")
+                    else:
+                        await asyncio.sleep(2 ** attempt)  # Exponential backoff
+        else:
+            print("⚠️ No HEALTH_ADVISOR_AGENT_ID environment variable found")
+            print("🔄 Creating new agent...")
             agent = await self.create_agent()
             self.agent_id = agent
             print(f"✅ Created new agent: {self.agent_id}")
+            print(f"💡 Consider setting HEALTH_ADVISOR_AGENT_ID={self.agent_id} in your .env file")
 
     async def create_agent(self) -> str:
         """Create a health advisor agent and return its ID."""
+        print("🔄 Creating new health advisor agent...")
         agent = self.project_client.agents.create_agent(
             model="gpt-4o-mini",
             name="CommunityHealthWorker",
@@ -206,6 +228,11 @@ class HealthAdvisorService:
             **Process:** First get their health summary and recent activity, then give a short, personal, encouraging message based on their actual data.""",
             tools=self.tool_definitions,
         )
+        
+        print(f"✅ Successfully created new agent with ID: {agent.id}")
+        print(f"💡 To avoid recreating agents, add this to your .env file:")
+        print(f"💡 HEALTH_ADVISOR_AGENT_ID={agent.id}")
+        
         return agent.id
 
     async def process_health_advice_request(self, user_id: int, message: str) -> Dict[str, Any]:
@@ -220,11 +247,32 @@ class HealthAdvisorService:
             Dict containing the response and metadata
         """
         try:
-            # Use existing agent
+            # Use existing agent with recovery logic
             if not self.agent_id:
-                print("⚠️ No agent ID found, creating new agent")
-                agent = await self.create_agent()
-                self.agent_id = agent
+                print("⚠️ No agent ID found, attempting to recover...")
+                # Try environment variable first, then fallback to hardcoded ID
+                self.agent_id = os.getenv("HEALTH_ADVISOR_AGENT_ID") or "asst_phjVsezosQqDE3XCufhu1oZd"
+                
+                if self.agent_id:
+                    if self.agent_id == "asst_phjVsezosQqDE3XCufhu1oZd":
+                        print("📌 Using hardcoded fallback agent ID for recovery")
+                    else:
+                        print("📌 Using environment variable for recovery")
+                    try:
+                        # Verify the agent still exists
+                        agent = self.project_client.agents.get_agent(self.agent_id)
+                        print(f"✅ Recovered existing agent with ID: {self.agent_id}")
+                    except Exception as e:
+                        print(f"⚠️ Failed to recover agent {self.agent_id}: {e}")
+                        print("🔄 Creating new agent as fallback...")
+                        agent = await self.create_agent()
+                        self.agent_id = agent
+                        print(f"✅ Created new agent: {self.agent_id}")
+                else:
+                    print("🔄 Creating new agent...")
+                    agent = await self.create_agent()
+                    self.agent_id = agent
+                    print(f"✅ Created new agent: {self.agent_id}")
             else:
                 print(f"✅ Using existing agent with ID: {self.agent_id}")
 

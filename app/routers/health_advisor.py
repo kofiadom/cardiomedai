@@ -135,12 +135,32 @@ async def get_service_status():
         if _health_advisor_service is None:
             return {
                 "status": "not_initialized",
-                "message": "Health advisor service not yet initialized"
+                "message": "Health advisor service not yet initialized",
+                "agent_id": None,
+                "env_agent_id": os.getenv("HEALTH_ADVISOR_AGENT_ID"),
+                "fallback_agent_id": "asst_phjVsezosQqDE3XCufhu1oZd"
             }
+
+        # Check if agent ID exists and is valid
+        agent_status = "unknown"
+        if _health_advisor_service.agent_id:
+            try:
+                # Try to verify the agent exists
+                agent = _health_advisor_service.project_client.agents.get_agent(_health_advisor_service.agent_id)
+                agent_status = "valid"
+            except Exception as e:
+                agent_status = f"invalid: {str(e)}"
+        else:
+            agent_status = "missing"
 
         return {
             "status": "ready",
             "message": "Health advisor service is ready",
+            "agent_id": _health_advisor_service.agent_id,
+            "agent_status": agent_status,
+            "env_agent_id": os.getenv("HEALTH_ADVISOR_AGENT_ID"),
+            "fallback_agent_id": "asst_phjVsezosQqDE3XCufhu1oZd",
+            "using_fallback": _health_advisor_service.agent_id == "asst_phjVsezosQqDE3XCufhu1oZd",
             "project_endpoint": _health_advisor_service.project_endpoint,
             "toolbox_url": _health_advisor_service.toolbox_url,
             "tools_loaded": len(_health_advisor_service.tool_definitions)
@@ -148,7 +168,9 @@ async def get_service_status():
     except Exception as e:
         return {
             "status": "error",
-            "message": f"Service status check failed: {str(e)}"
+            "message": f"Service status check failed: {str(e)}",
+            "agent_id": None,
+            "env_agent_id": os.getenv("HEALTH_ADVISOR_AGENT_ID")
         }
 
 
@@ -160,12 +182,24 @@ async def initialize_service():
     """
     try:
         global _health_advisor_service
-        _health_advisor_service = HealthAdvisorService()
-        await _health_advisor_service.initialize()
+        # Only reinitialize if service doesn't exist or failed
+        if _health_advisor_service is None:
+            _health_advisor_service = HealthAdvisorService()
+            await _health_advisor_service.initialize()
+            status_message = "Health advisor service initialized successfully"
+        else:
+            # Service exists, just verify it's working
+            if not _health_advisor_service.agent_id:
+                # Agent ID is missing, try to recover
+                await _health_advisor_service.initialize()
+                status_message = "Health advisor service recovered successfully"
+            else:
+                status_message = "Health advisor service already initialized and ready"
 
         return {
             "status": "initialized",
-            "message": "Health advisor service initialized successfully",
+            "message": status_message,
+            "agent_id": _health_advisor_service.agent_id,
             "tools_loaded": len(_health_advisor_service.tool_definitions)
         }
     except Exception as e:
