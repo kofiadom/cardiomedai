@@ -1,14 +1,17 @@
 # Coolify Deployment Instructions for OpenAPI Documentation Fix
 
-## Issue Fixed
-The Swagger UI documentation was not accessible at `/docs` due to a 404 error on `/openapi.json`. This has been resolved by explicitly configuring the FastAPI application with the correct OpenAPI endpoints.
+## Issue Identified and Fixed
+The Swagger UI documentation was not accessible at `/docs` due to a **path resolution issue**. The FastAPI app runs under `/cardiomed` path, but Swagger UI was trying to fetch OpenAPI schema from the root path.
 
-## Changes Made
+**Root Cause**: Swagger UI was looking for `/openapi.json` instead of `/cardiomed/openapi.json`
+
+## Final Solution Applied
 
 ### 1. Updated FastAPI Configuration (`app/main.py`)
 - Explicitly set `docs_url="/docs"`
 - Explicitly set `redoc_url="/redoc"`
 - Explicitly set `openapi_url="/openapi.json"`
+- **CRITICAL FIX**: Added `root_path="/cardiomed"` to handle reverse proxy path correctly
 - Added health check endpoint at `/health`
 - Added OpenAPI test endpoint at `/openapi-test`
 
@@ -16,20 +19,33 @@ The Swagger UI documentation was not accessible at `/docs` due to a 404 error on
 - Added `--log-level info` to uvicorn command for better logging
 - Maintained production-ready configuration
 
+## Verification Results
+✅ All endpoints are working correctly:
+- Main API: `https://staging.codinnovations.com/cardiomed/`
+- Health Check: `https://staging.codinnovations.com/cardiomed/health`
+- OpenAPI Test: `https://staging.codinnovations.com/cardiomed/openapi-test`
+- OpenAPI JSON: `https://staging.codinnovations.com/cardiomed/openapi.json` (45 endpoints documented)
+
 ## Deployment Steps in Coolify
 
-1. **Push Changes to Repository**
+1. **Fix Coolify Configuration First**
+   - Go to your Coolify dashboard
+   - Navigate to your CardioMed AI application
+   - Go to "Pre/Post Deployment Commands" section
+   - **DELETE** the `php artisan migrate` command from Pre-deployment
+   - Save the configuration
+
+2. **Push Changes to Repository**
    ```bash
    git add .
    git commit -m "Fix OpenAPI documentation endpoints for Swagger UI"
    git push origin main
    ```
 
-2. **Redeploy in Coolify**
-   - Go to your Coolify dashboard
-   - Navigate to your CardioMed AI application
+3. **Redeploy in Coolify**
    - Click "Deploy" to trigger a new deployment
    - Wait for the build and deployment to complete
+   - Monitor the deployment logs for any errors
 
 3. **Verify the Fix**
    After deployment, test the following endpoints:
