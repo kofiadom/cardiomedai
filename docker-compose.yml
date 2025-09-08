@@ -1,10 +1,10 @@
 ﻿services:
   toolbox:
-    image: us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0
+    build:
+      context: .
+      dockerfile: Dockerfile-toolbox
     ports:
       - "5000:5000"
-    volumes:
-      - ./app/advisor_agent/tools.yaml:/tools.yaml
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - DB_HOST=${DB_HOST}
