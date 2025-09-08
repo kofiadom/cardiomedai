@@ -27,8 +27,11 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="CardioMed AI API",
-    description="An API for managing blood pressure readings",
-    version="0.1.0"
+    description="An API for managing blood pressure readings and health monitoring",
+    version="0.1.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
 # Add CORS middleware
@@ -74,6 +77,21 @@ def read_root():
             "workouts": "/reminders/workouts/",
             "create_workout": "/reminders/workout/"
         }
+    }
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint to verify the API is running"""
+    return {"status": "healthy", "message": "CardioMed AI API is running"}
+
+@app.get("/openapi-test")
+def openapi_test():
+    """Test endpoint to verify OpenAPI is working"""
+    return {
+        "openapi_url": "/openapi.json",
+        "docs_url": "/docs",
+        "redoc_url": "/redoc",
+        "message": "OpenAPI documentation should be available at /docs"
     }
 
 if __name__ == "__main__":

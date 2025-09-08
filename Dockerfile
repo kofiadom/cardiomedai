@@ -61,7 +61,7 @@ EXPOSE 8000
 RUN echo '#!/bin/bash\n\
 # Start the FastAPI application\n\
 echo "Starting FastAPI application..."\n\
-uvicorn app.main:app --host 0.0.0.0 --port 8000' > /app/start.sh && \
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level info' > /app/start.sh && \
     chmod +x /app/start.sh
 
 # Command to run the application
