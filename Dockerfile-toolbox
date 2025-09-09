@@ -1,5 +1,5 @@
 ﻿# Dockerfile for MCP Toolbox deployment on Render
-# This builds a container with the toolbox and Azure SQL Database configuration
+# This builds a container with the toolbox and PostgreSQL Database configuration
 
 # Use the original toolbox image as base
 FROM us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.7.0

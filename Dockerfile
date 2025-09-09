@@ -12,22 +12,10 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ODBC dependencies first to avoid conflicts
+# Install PostgreSQL client libraries and development headers
 RUN apt-get update && apt-get install -y \
-    unixodbc \
-    unixodbc-dev \
-    odbcinst \
-    unixodbc-common \
-    libodbcinst2 \
-    libodbc2 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Microsoft ODBC Driver 18 for SQL Server using direct download method
-RUN curl -o msodbcsql18.deb -L "https://packages.microsoft.com/debian/11/prod/pool/main/m/msodbcsql18/msodbcsql18_18.3.2.1-1_amd64.deb" \
-    && DEBIAN_FRONTEND=noninteractive ACCEPT_EULA=Y dpkg -i msodbcsql18.deb || true \
-    && apt-get update \
-    && apt-get install -f -y \
-    && rm msodbcsql18.deb \
+    libpq-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements from pyproject.toml
