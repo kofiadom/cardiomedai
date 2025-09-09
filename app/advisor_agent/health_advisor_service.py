@@ -284,11 +284,18 @@ class HealthAdvisorService:
             # Create a thread for communication
             thread = self.project_client.agents.threads.create()
 
-            # Add a message to the thread
+            # Enhance the message to prompt the agent to get user's name first
+            enhanced_message = f"""Please provide me with a personalized health check-in.
+
+IMPORTANT: Before giving me health advice, please first get my profile to learn my name, then greet me personally by name.
+
+User's original message: {message}"""
+
+            # Add the enhanced message to the thread
             message_obj = self.project_client.agents.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content=message,
+                content=enhanced_message,
             )
 
             # Create a run for the agent to process the message
