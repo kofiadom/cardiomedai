@@ -362,7 +362,7 @@ class KnowledgeAgentService:
                     tool_outputs = []
                     for tool_call in tool_calls:
                         function_name = tool_call.function.name
-                        print(f"✅ Calling tool: {function_name}")
+                        print(f"✅ Calling tool: {function_name} for user_id: {user_id}")
 
                         # Handle datetime tool
                         if function_name == "get_current_datetime":
@@ -374,7 +374,11 @@ class KnowledgeAgentService:
                         # Handle database tools
                         elif function_name in self.db_tool_map:
                             tool = self.db_tool_map[function_name]
-                            result = await tool()  # MCP tools are async
+                            # MCP tools are async and now require user_id parameter
+                            if user_id:
+                                result = await tool(user_id)
+                            else:
+                                result = {"error": "No user_id provided for database tool"}
                             tool_outputs.append({
                                 "tool_call_id": tool_call.id,
                                 "output": json.dumps(result)

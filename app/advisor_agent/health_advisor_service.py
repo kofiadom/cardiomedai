@@ -305,13 +305,14 @@ class HealthAdvisorService:
                     tool_outputs = []
                     for tool_call in tool_calls:
                         tool = self.tool_map[tool_call.function.name]
-                        print(f"✅Calling tool: {tool_call.function.name}")
+                        print(f"✅Calling tool: {tool_call.function.name} for user_id: {user_id}")
                         
                         # Handle datetime tool differently (it's a regular function, not async)
                         if tool_call.function.name == "get_current_datetime":
                             result = tool()  # Call without await
                         else:
-                            result = await tool()  # MCP tools are async
+                            # MCP tools are async and now require user_id parameter
+                            result = await tool(user_id)
                         
                         tool_outputs.append({
                             "tool_call_id": tool_call.id,
