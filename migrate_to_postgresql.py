@@ -49,10 +49,10 @@ def get_sqlite_connection():
 
 def get_postgresql_engine():
     """Get PostgreSQL Database engine."""
-    database_url = os.getenv("POSTGRES_URL")
+    database_url = os.getenv("POSTGRES_URL_PUBLIC")
     if not database_url:
         print("POSTGRES_URL environment variable not found!")
-        print("Please make sure you have set the POSTGRES_URL in your .env file.")
+        print("Please make sure you have set the POSTGRES_URL_PUBLIC in your .env file.")
         return None
 
     if database_url.startswith("sqlite"):
