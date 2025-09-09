@@ -14,6 +14,10 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     command: /toolbox --tools-file /tools.yaml --address 0.0.0.0
+    networks:
+      - default
+    external_links:
+      - jcgogsckk0808wsw4o84ckcw:jcgogsckk0808wsw4o84ckcw
 
   backend:
     build:
@@ -40,3 +44,12 @@ services:
       - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
     depends_on:
       - toolbox
+    networks:
+      - default
+    external_links:
+      - jcgogsckk0808wsw4o84ckcw:jcgogsckk0808wsw4o84ckcw
+
+networks:
+  default:
+    external: true
+    name: coolify

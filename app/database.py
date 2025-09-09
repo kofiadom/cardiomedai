@@ -16,6 +16,16 @@ if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine = create_engine(
         SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
     )
+elif SQLALCHEMY_DATABASE_URL.startswith("postgresql"):
+    # PostgreSQL configuration
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        echo=False,  # Set to True for debugging SQL queries
+        pool_pre_ping=True,  # Verify connections before use
+        pool_recycle=300,  # Recycle connections every 5 minutes
+        pool_size=10,  # Connection pool size
+        max_overflow=20,  # Maximum overflow connections
+    )
 else:
     # SQL Server configuration
     engine = create_engine(
