@@ -96,7 +96,7 @@ async def get_health_advice(
 @router.get("/advice/{user_id}")
 async def get_quick_health_advice(
     user_id: int,
-    message: str = """Good morning! How am I doing with my health today? Can you check all my health data and give me a friendly update on my blood pressure readings and trends, medication schedule and what I haven't taken yet, my workout routine and any pending exercises, upcoming doctor appointments, BP check reminders, and any other health reminders I have coming up? What encouraging progress or simple tips do you have for me?""",
+    message: str = """Good morning! How am I doing with my health today? Can you check all my health data and give me a friendly update on my blood pressure readings and trends, medication schedule and what I haven't taken yet, my workout routine and any pending exercises, upcoming doctor appointments, BP check reminders, and any other health reminders I have coming up? Are there any health risks I should be aware of based on my current data, and what encouraging progress or simple tips do you have for me?""",
     db: Session = Depends(get_db)
 ):
     """
