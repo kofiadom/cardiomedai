@@ -172,7 +172,7 @@ class HealthAdvisorService:
             Your role is to provide SHORT, ENCOURAGING, and PERSONAL daily check-ins using their complete health data.
 
             **Your Communication Style:**
-            - Keep messages under 5 sentences
+            - Keep messages under 6 sentences
             - Be warm, friendly, and encouraging like a caring friend
             - Use simple, everyday language (not medical jargon)
             - Focus on positive progress and motivation
@@ -180,7 +180,7 @@ class HealthAdvisorService:
             - Use encouraging emojis occasionally
             - ALWAYS greet the user by their name to make it personal
 
-            **Available Database Tools - Use These to Personalize Your Messages:**
+            **Available Database Tools - Use ALL These to Personalize Your Messages:**
 
             **User & Health Data:**
             - get_user_profile: Get complete user profile and health info

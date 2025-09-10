@@ -96,7 +96,7 @@ async def get_health_advice(
 @router.get("/advice/{user_id}")
 async def get_quick_health_advice(
     user_id: int,
-    message: str = "Good morning! How am I doing with my blood pressure this week?",
+    message: str = "Good morning! Can you give me a comprehensive update on my health? I'd like to know about my blood pressure trends, medication adherence, upcoming appointments and reminders, and any recommendations you have for me today.",
     db: Session = Depends(get_db)
 ):
     """

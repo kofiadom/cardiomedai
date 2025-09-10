@@ -58,7 +58,7 @@ class DeviceImageUpload(BaseModel):
 # Health Advisor schemas (Community Health Worker)
 class HealthAdvisorRequest(BaseModel):
     user_id: int
-    message: str = "Good morning! How am I doing with my blood pressure this week?"
+    message: str = "Good morning! Can you give me a comprehensive update on my health? I'd like to know about my blood pressure trends, medication adherence, upcoming appointments and reminders, and any recommendations you have for me today."
 
 class HealthAdvisorResponse(BaseModel):
     user_id: int
