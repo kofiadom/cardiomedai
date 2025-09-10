@@ -52,7 +52,7 @@ tools:
     kind: "postgres-sql"
     source: "my-sql-db"
     description: "Get pending (not taken) medication reminders"
-    statement: "SELECT * FROM medication_reminders WHERE user_id = $1 AND is_taken = 0 ORDER BY schedule_datetime"
+    statement: "SELECT * FROM medication_reminders WHERE user_id = $1 AND is_taken = false ORDER BY schedule_datetime"
     parameters:
       - name: "user_id"
         type: "integer"
@@ -72,7 +72,7 @@ tools:
     kind: "postgres-sql"
     source: "my-sql-db"
     description: "Get pending (not completed) BP check reminders"
-    statement: "SELECT * FROM bp_check_reminders WHERE user_id = $1 AND is_completed = 0 ORDER BY reminder_datetime"
+    statement: "SELECT * FROM bp_check_reminders WHERE user_id = $1 AND is_completed = false ORDER BY reminder_datetime"
     parameters:
       - name: "user_id"
         type: "integer"
@@ -92,7 +92,7 @@ tools:
     kind: "postgres-sql"
     source: "my-sql-db"
     description: "Get upcoming doctor appointments (not completed)"
-    statement: "SELECT * FROM doctor_appointment_reminders WHERE user_id = $1 AND is_completed = 0 ORDER BY appointment_datetime"
+    statement: "SELECT * FROM doctor_appointment_reminders WHERE user_id = $1 AND is_completed = false ORDER BY appointment_datetime"
     parameters:
       - name: "user_id"
         type: "integer"
@@ -112,7 +112,7 @@ tools:
     kind: "postgres-sql"
     source: "my-sql-db"
     description: "Get pending (not completed) workout reminders"
-    statement: "SELECT * FROM workout_reminders WHERE user_id = $1 AND is_completed = 0 ORDER BY workout_datetime"
+    statement: "SELECT * FROM workout_reminders WHERE user_id = $1 AND is_completed = false ORDER BY workout_datetime"
     parameters:
       - name: "user_id"
         type: "integer"
