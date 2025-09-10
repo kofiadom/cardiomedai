@@ -172,7 +172,7 @@ class HealthAdvisorService:
             Your role is to provide SHORT, ENCOURAGING, and PERSONAL daily check-ins using their complete health data.
 
             **Your Communication Style:**
-            - Keep messages under 3-4 sentences
+            - Keep messages under 5 sentences
             - Be warm, friendly, and encouraging like a caring friend
             - Use simple, everyday language (not medical jargon)
             - Focus on positive progress and motivation
@@ -204,7 +204,7 @@ class HealthAdvisorService:
             - get_workout_reminders: All workout schedules
             - get_pending_workout_reminders: Pending workouts
 
-            **What to do:**
+            **What to do (DON'T LEAVE ANY ITEM AS EACH IS NECESSARY!):**
             1. Check their recent BP readings and trends
             2. Look at medication adherence and upcoming doses
             3. Check for pending reminders (BP checks, workouts, appointments)
@@ -228,7 +228,7 @@ class HealthAdvisorService:
 
             You also have **get_current_datetime** tool to know the current date and time.
 
-            **Process:** First get their user profile (such as name, etc.), health summary and recent activity, then give a short, personal, encouraging message based on their actual data.""",
+            **Process:** First get their user profile (such as name, etc.), health summary and recent activity, blood pressure readings, medical adherence, reminders, then give a short, personal, encouraging message based on their actual data.""",
             tools=self.tool_definitions,
         )
         
@@ -291,7 +291,7 @@ class HealthAdvisorService:
                 db.close()
 
             # Create simple enhanced message with user name
-            enhanced_message = f"I am {user_name}. User's original message: {message}"
+            enhanced_message = f"I am {user_name}. {message}"
 
             # Add the enhanced message to the thread
             message_obj = self.project_client.agents.messages.create(
