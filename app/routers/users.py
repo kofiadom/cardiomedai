@@ -4,7 +4,6 @@ from typing import List
 
 from .. import models, schemas
 from ..database import get_db
-from passlib.context import CryptContext
 
 router = APIRouter(
     prefix="/users",
@@ -12,26 +11,20 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
 @router.post("/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     db_user = db.query(models.User).filter(models.User.username == user.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already taken")
-    
-    hashed_password = get_password_hash(user.password)
+
     db_user = models.User(
         username=user.username,
         email=user.email,
-        hashed_password=hashed_password,
+        hashed_password=None,
         full_name=user.full_name,
         age=user.age,
         gender=user.gender,

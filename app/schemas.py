@@ -15,7 +15,7 @@ class UserBase(BaseModel):
     medications: Optional[str] = None
 
 class UserCreate(UserBase):
-    password: str
+    pass
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
