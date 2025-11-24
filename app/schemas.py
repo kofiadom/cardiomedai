@@ -59,11 +59,14 @@ class DeviceImageUpload(BaseModel):
 class HealthAdvisorRequest(BaseModel):
     user_id: int
     message: str = """Good morning! How am I doing with my health today? Can you check all my health data and give me a friendly update on my blood pressure readings and trends, medication schedule and what I haven't taken yet, my workout routine and any pending exercises, upcoming doctor appointments, BP check reminders, and any other health reminders I have coming up? Are there any health risks I should be aware of based on my current data, and what encouraging progress or simple tips do you have for me? Please be very precise and thorough - make sure to mention every important detail from all my data you collect."""
+    language: str = "en"  # Language code for response translation (e.g., "tw" for Twi, "gaa" for Ga)
 
 class HealthAdvisorResponse(BaseModel):
     user_id: int
     request_message: str
     advisor_response: str
+    translated_response: Optional[str] = None  # Translated version of advisor_response
+    language: str = "en"  # Language code used for translation
     agent_id: Optional[str] = None
     thread_id: Optional[str] = None
     status: str = "completed"
